@@ -1,14 +1,23 @@
 # WordPress React Theme
 
+This is a headless WordPress theme built with React that consumes a WPGraphQL API and renders content dynamically using a block-based layout system.  
 **Author:** Thomas Pham
 
-Built with Next.js, TypeScript, React, Apollo, GraphQL, Material Design (MUI) and SCSS
+Built with React, TypeScript, Apollo Client, GraphQL, MUI and SCSS
 
-**Used plugins:**
+**Dependencies:**
 * Swiper
 * Yet-another-react-lightbox
 * DOMPurify
 * Framer-Motion
+
+## Features
+
+- Headless WordPress architecture
+- GraphQL-based data fetching
+- Dynamic block renderer system
+- Sanitized HTML output (XSS-safe)
+- Modular layout system per page template
 
 ## Setup
 
@@ -20,22 +29,28 @@ Built with Next.js, TypeScript, React, Apollo, GraphQL, Material Design (MUI) an
 
 #### INSTALLATION:
 Create **.env** file based on **.env.dist**  
-Run `docker-compose up -d` to install all dependencies and visit
 
-> **localhost:8080**
+##### 1. Backend (WordPress + Docker)
+Run docker to install all dependencies
+```bash
+docker-compose up -d
+```
 
-run `cd ntech-theme && npm install` to install dependencies  
-
-run `cd ntech-theme && npm run build:dev` to start dev server
-
+##### 2. Frontend (WordPress React Theme)
+Run npm to install all packages and start the dev server
+```bash
+cd ntech-theme
+npm install
+npm run dev
+```
 
 ## Services
-> **App Preview:** localhost:3000  
-**BrowserSync Settings:** localhost:3001  
-
-> **MailDev:** localhost:1080  
-**WordPress:** localhost:8080  
-**PHPMyAdmin:** localhost:8180  
+**Frontend:** http://localhost:3000  
+**WordPress:** http://localhost:8080  
+**GraphQL:** http://localhost:8080/graphql  
+**BrowserSync Settings:** http://localhost:3001  
+**MailDev:** http://localhost:1080  
+**PHPMyAdmin:** http://localhost:8180  
 
 **Note:** To use WP CLI run `docker compose run --rm wordpress-cli bash`
 
@@ -61,7 +76,7 @@ Install WordPress and follow this steps for configuration:
 
 1. Plugin: Install and activate WPGraphQL
 2. Plugin: Install and activate ACF
-3. Plugin: Install and activate WPGraphQL for AFC
+3. Plugin: Install and activate WPGraphQL for ACF
 4. Config: Set static page in settings/reading
 5. Config: Disable organize uploads in settings/media
 6. Config: Activate postname in settings/permalinks
@@ -91,3 +106,14 @@ To run inside the theme directory
 - Build Prod: `npm run build:prod`
 - Build Dev:  `npm run build:dev`
 - Dev Server: `npm run dev`
+
+
+## Security
+
+- All HTML content is sanitized using DOMPurify
+- GraphQL endpoint is public but read-only
+- No authentication or user data handling on frontend
+
+## License
+
+MIT © Thomas Pham
