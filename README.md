@@ -1,118 +1,185 @@
 # WordPress React Theme
 
-This is a headless WordPress theme built with React that consumes a WPGraphQL API and renders content dynamically using a block-based layout system.  
+![License](https://img.shields.io/badge/license-MIT-green)
+![Docker](https://img.shields.io/badge/docker-ready-blue)
+![React](https://img.shields.io/badge/frontend-react-61DAFB)
+![GraphQL](https://img.shields.io/badge/api-graphql-E10098)
+![WordPress](https://img.shields.io/badge/backend-wordpress-21759B)
+![Security](https://img.shields.io/badge/security-sanitized-brightgreen)
 
-Built with React, TypeScript, Apollo Client, GraphQL, MUI and SCSS
+A modern headless WordPress theme using React and WPGraphQL with a dynamic block-based rendering system.
 
-**Dependencies:**
-* Swiper
-* Yet-another-react-lightbox
-* DOMPurify
-* Framer-Motion
+Built with React, TypeScript, Apollo Client, GraphQL, MUI and SCSS.
 
-## Features
+---
 
-- Headless WordPress architecture
-- GraphQL-based data fetching
-- Dynamic block renderer system
-- Sanitized HTML output (XSS-safe)
-- Modular layout system per page template
+## ✨ Features
 
-## Setup
+* Headless WordPress architecture
+* GraphQL-based data fetching
+* Dynamic block renderer system
+* Sanitized HTML output (XSS-safe)
+* Modular layout system per page template
 
-#### REQUIREMENTS:
-* docker
-* npm
+---
 
-<br>
+## ⚡ Quick Start
 
-#### INSTALLATION:
-Create **.env** file based on **.env.dist**  
+```bash
+docker-compose up -d
+cd ntech-theme
+npm install
+npm run dev
+```
 
-##### 1. Backend (WordPress + Docker)
-Run docker to install all dependencies
+---
+
+## 🚀 Setup
+
+### Requirements
+
+* Docker
+* Node.js / npm
+
+---
+
+### Installation
+
+Create a `.env` file based on `.env.dist`.
+
+#### 1. Backend (WordPress + Docker)
+
+Start the backend services:
+
 ```bash
 docker-compose up -d
 ```
 
-##### 2. Frontend (WordPress React Theme)
-Run npm to install all packages and start the dev server
+#### 2. Frontend (React Theme)
+
+Install dependencies and start development:
+
 ```bash
 cd ntech-theme
 npm install
 npm run dev
 ```
 
-## Services
-**Frontend:** http://localhost:3000  
-**WordPress:** http://localhost:8080  
-**GraphQL:** http://localhost:8080/graphql  
-**BrowserSync Settings:** http://localhost:3001  
-**MailDev:** http://localhost:1080  
-**PHPMyAdmin:** http://localhost:8180  
+---
 
-**Note:** To use WP CLI run `docker compose run --rm wordpress-cli bash`
+## 🌐 Services
+
+| Service     | URL                           |
+| ----------- | ----------------------------- |
+| Frontend    | http://localhost:3000         |
+| WordPress   | http://localhost:8080         |
+| GraphQL API | http://localhost:8080/graphql |
+| BrowserSync | http://localhost:3001         |
+| MailDev     | http://localhost:1080         |
+| PHPMyAdmin  | http://localhost:8180         |
+
+> ℹ️ WP CLI:
+>
+> ```bash
+> docker compose run --rm wordpress-cli bash
+> ```
 
 ---
 
-### Import DB Dump
-If necessary, use PHPMyAdmin to import a dump (compressed sql file, e.g: "dump.sql.zip") or use /db/init.sql to create a database during the docker initialization process.
+## 📦 Import DB Dump
 
-#### Modify WP Dump by SQL:
-1. Run query to set endpoint:  
-   `UPDATE wp_options SET option_value = 'http://localhost:8080' WHERE option_name IN ('siteurl','home');`
-2. Run query to set new password:   
-   `UPDATE wp_users SET user_pass = MD5('newpassword') WHERE user_login = 'admin';`
+Import via PHPMyAdmin or use `/db/init.sql` during Docker initialization.
 
-#### Modify WP Dump by WP CLI:
-1. `wp search-replace 'https://old-domain.com' 'http://localhost:8080' --all-tables`
-2. `wp user update admin --user_pass=newpassword`
+### Modify via SQL
 
----
+```sql
+UPDATE wp_options 
+SET option_value = 'http://localhost:8080' 
+WHERE option_name IN ('siteurl','home');
 
-### WordPress Installation
-Install WordPress and follow this steps for configuration:
+UPDATE wp_users 
+SET user_pass = MD5('newpassword') 
+WHERE user_login = 'admin';
+```
 
-1. Plugin: Install and activate WPGraphQL
-2. Plugin: Install and activate ACF
-3. Plugin: Install and activate WPGraphQL for ACF
-4. Config: Set static page in settings/reading
-5. Config: Disable organize uploads in settings/media
-6. Config: Activate postname in settings/permalinks
-7. Config: Activate n-tech theme in design
+### Modify via WP CLI
 
-### Usage
-1. Create in ACF new Field Group:  
-   "Post Layout" with field "Placement", type "select" and values "header", "content" and "sidebar"  
-   Set "content" as default and field as required 
-2. Create Categories to assign posts to pages (e.g. "Home", "Profile", ...)
-3. Create Pages and assign templates:  
-   **Home:** FrontPage  
-   **Default:** Content header, Content area + sidebar  
-   **Static:** Content area only  
-   **Error:** Specific for error pages (excluded from search results)
-4. Create Posts and select category (category `form-title` = page `form-title`) and placement to control their position
-5. Create main (primary) and footer (secondary) menu in Appearance &rarr; Menus
+```bash
+wp search-replace 'https://old-domain.com' 'http://localhost:8080' --all-tables
+wp user update admin --user_pass=newpassword
+```
 
 ---
 
-### Commands
+## ⚙️ WordPress Installation
 
-To run inside the theme directory
+1. Install & activate plugins:
 
-- ESLinting:  `npm run lint`
-- Testing:    `npm run test`
-- Build Prod: `npm run build:prod`
-- Build Dev:  `npm run build:dev`
-- Dev Server: `npm run dev`
+   * WPGraphQL
+   * ACF
+   * WPGraphQL for ACF
 
+2. Configure settings:
 
-## Security
+   * Set static front page (settings → reading )
+   * Disable “organize uploads” (settings → media)
+   * Enable post name permalinks (settings → permalinks)
+   * Activate the ntech theme
 
-- All HTML content is sanitized using DOMPurify
-- GraphQL endpoint is public but read-only
-- No authentication or user data handling on frontend
+---
 
-## License
+## 🧠 Usage
+
+1. Create an ACF Field Group:
+
+   * Name: `Post Layout`
+   * Field: `Placement` (required)
+   * Type: Select (`header`, `content`, `sidebar`)
+   * Default: `content`
+
+2. Create categories for page mapping (e.g. `home`, `profile`, ...)
+
+3. Create pages with templates:
+
+   * **Home** → FrontPage
+   * **Default** → Header + Content + Sidebar
+   * **Static** → Content only
+   * **Error** → Excluded from search
+
+4. Create posts:
+
+   * Assign category
+   * Define placement (controls layout position)
+
+5. Configure menus (Appearance → Menus):
+
+   * Primary (main)
+   * Secondary (footer)
+
+---
+
+## 🛠️ Commands
+
+Run inside `ntech-theme`:
+
+```bash
+npm run lint        # ESLint
+npm run test        # TypeScript + Jest
+npm run build:prod  # Production build
+npm run build:dev   # Development build
+npm run dev         # Watch mode
+```
+
+---
+
+## 🔐 Security
+
+* All HTML content is sanitized using DOMPurify
+* GraphQL endpoint is public (read-only usage intended)
+* No authentication or user data handling on frontend
+
+---
+
+## 📄 License
 
 MIT © Thomas Pham
