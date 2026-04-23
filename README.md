@@ -1,7 +1,6 @@
 # WordPress React Theme
 
 This is a headless WordPress theme built with React that consumes a WPGraphQL API and renders content dynamically using a block-based layout system.  
-**Author:** Thomas Pham
 
 Built with React, TypeScript, Apollo Client, GraphQL, MUI and SCSS
 
