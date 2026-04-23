@@ -1,0 +1,27 @@
+# wordpress core
+wordpress/*
+# !wordpress/wp-content/
+
+# ignore database dump
+db/dump.sql
+db/dump.sql.zip
+
+# ignore log files
+*.log
+
+# ignore dependencies
+ntech-theme/node_modules
+
+# ignore dist files
+ntech-theme/dist
+
+# ignore env files
+.env
+
+# ignore typescript auto-generated files
+*.tsbuildinfo
+*.scss.d.ts
+next-env.d.ts
+
+# IDE
+.idea/

@@ -1,0 +1,95 @@
+services:
+  wordpress:
+    container_name: ntech_wp
+    image: wordpress:6.9.4-php8.2-apache
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - wp-core:/var/www/html
+      - wp-content:/var/www/html/wp-content
+      - ./ntech-theme:/var/www/html/wp-content/themes/ntech:delegated
+    ports:
+      - '8080:80'
+    env_file:
+      - .env
+
+    environment:
+      WORDPRESS_DB_HOST: database
+      WORDPRESS_DB_NAME: '${MYSQL_DATABASE}'
+      WORDPRESS_DB_USER: '${MYSQL_USER}'
+      WORDPRESS_DB_PASSWORD: '${MYSQL_PASSWORD}'
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_MAIL_SMTP_CUSTOM', '${SMTP_CUSTOM}');
+        define('WP_MAIL_SMTP_HOST', '${SMTP_HOST}');
+        define('WP_MAIL_SMTP_PORT', '${SMTP_PORT}');
+
+  wordpress-cli:
+    container_name: ntech_wp-cli
+    image: wordpress:cli
+    depends_on:
+      - database
+      - wordpress
+    volumes:
+      - wp-core:/var/www/html
+      - wp-content:/var/www/html/wp-content
+      - ./ntech-theme:/var/www/html/wp-content/themes/ntech
+
+    environment:
+      WORDPRESS_DB_HOST: database
+      WORDPRESS_DB_NAME: '${MYSQL_DATABASE}'
+      WORDPRESS_DB_USER: '${MYSQL_USER}'
+      WORDPRESS_DB_PASSWORD: '${MYSQL_PASSWORD}'
+
+  phpmyadmin:
+    container_name: ntech_php
+    image: phpmyadmin/phpmyadmin:latest
+    platform: linux/amd64
+    restart: unless-stopped
+    depends_on:
+      - database
+    ports:
+      - '8180:80'
+
+    environment:
+      PMA_HOST: database
+      PMA_USER: '${MYSQL_USER}'
+      PMA_PASSWORD: '${MYSQL_PASSWORD}'
+
+  database:
+    container_name: ntech_db
+    image: mysql:8.4
+    restart: unless-stopped
+    ports:
+      - '3306:3306'
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/00-init.sql
+    env_file:
+      - .env
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    environment:
+      MYSQL_DATABASE: '${MYSQL_DATABASE}'
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_USER: '${MYSQL_USER}'
+      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
+
+  mailcatcher:
+    container_name: ntech_mail
+    image: maildev/maildev
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "1080:1080"
+
+volumes:
+  db-data:
+  wp-core:
+  wp-content:

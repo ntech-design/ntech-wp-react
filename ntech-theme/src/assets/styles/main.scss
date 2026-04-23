@@ -1,0 +1,17 @@
+@use 'common/variables' as * ;
+@use 'common/animations' as * ;
+
+html {
+  font-size: 97.5%;
+  overflow-y: auto;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+html, body, #root {
+  background-color: var(--mui-palette-background-default);
+  transition: background-color 0.3s ease;
+}
+
+.yarl__slide { flex-wrap: wrap; }

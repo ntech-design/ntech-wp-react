@@ -1,0 +1,20 @@
+# ----- above # BEGIN WordPress -----
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+RewriteRule ^wp-admin(/|$) - [L]
+RewriteRule ^wp-includes(/|$) - [L]
+RewriteRule ^wp-json(/|$) - [L]
+RewriteRule ^graphql(/|$) - [L]
+RewriteRule ^wp-content(/|$) - [L]
+
+RewriteRule . /index.php [L]
+</IfModule>
+
+# BEGIN WordPress
