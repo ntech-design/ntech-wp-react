@@ -9,9 +9,13 @@ type PostSidebarProps = {
 }
 
 const PostSidebarRoot = styled('div')(({ theme }) => ({
+  display: 'flex',
+  gap: theme.spacing(4),
+  flexWrap: 'wrap',
   flex: 1,
   minWidth: '13.438rem',
-  [theme.breakpoints.up('md')]: { maxWidth: '13.438rem' },
+  [theme.breakpoints.up('md')]: { display: 'block', maxWidth: '13.438rem' },
+  '> div': { flex: 'auto' }
 }));
 
 export default function PostSidebar({ posts }: PostSidebarProps) {
