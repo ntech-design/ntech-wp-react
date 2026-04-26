@@ -31,11 +31,11 @@ export const GET_PAGE_WITH_POSTS = gql`
           attributes { columns align sizeSlug linkTo }
           innerBlocks {
             __typename
-            ... on CoreImage { attributes { id url alt caption width height } }
+            ... on CoreImage { attributes { id url alt caption width height linkDestination href lightbox linkTarget } }
           }
         }
-        ... on CoreImage { attributes { id url alt caption width height } }
-        ... on CoreColumns { 
+        ... on CoreImage { attributes { id url alt caption width height linkDestination href lightbox linkTarget } }
+        ... on CoreColumns {
           attributes { isStackedOnMobile }
           innerBlocks { __typename name clientId renderedHtml }
         }
@@ -56,7 +56,10 @@ export const GET_PAGE_WITH_POSTS = gql`
       }
     }
 
-    posts(where: { categoryName: $category }) {
+    posts(where: {
+      categoryName: $category
+      orderby: { field: DATE, order: DESC }
+    }) {
       nodes {
         id
         title
@@ -78,10 +81,10 @@ export const GET_PAGE_WITH_POSTS = gql`
             attributes { columns align sizeSlug linkTo }
             innerBlocks {
               __typename
-              ... on CoreImage { attributes { id url alt caption width height } }
+              ... on CoreImage { attributes { id url alt caption width height linkDestination href lightbox linkTarget } }
             }
           }
-          ... on CoreImage { attributes { id url alt caption width height } }
+          ... on CoreImage { attributes { id url alt caption width height linkDestination href lightbox linkTarget } }
           ... on CoreColumns {
             attributes { isStackedOnMobile }
             innerBlocks { __typename name clientId renderedHtml }
