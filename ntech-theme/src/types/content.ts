@@ -36,6 +36,11 @@ export interface CoreImageBlock extends WordPressBlock {
     caption?: string;
     width?: number;
     height?: number;
+    aspectRatio?: string;
+    linkDestination?: string;
+    href?: string;
+    linkTarget?: string;
+    lightbox?: string;
   };
 }
 

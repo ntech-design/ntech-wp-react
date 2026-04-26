@@ -3,7 +3,7 @@ import DOMPurify from 'dompurify';
 import { styled } from '@mui/material/styles';
 import { PostType } from '@/types/wordpress';
 import PostHeaderSocial from '@/components/PostHeaderSocial';
-import { safeHtml } from '@/utils/template';
+import HtmlContent from '@/components/HtmlContent';
 
 type PostHeaderProps = {
   id?: string;
@@ -22,26 +22,19 @@ const PostHeaderRoot = styled('header')(({ theme }) => ({
   [theme.breakpoints.up('sm')]: { height: 'calc(12.5rem + 2px)' },
 
   '.post-header__content': {
-    padding: theme.spacing(4),
+    padding: theme.spacing(4, 0, 4, 4),
     overflow: 'hidden',
+    height: '100%',
+    borderTopRightRadius: theme.shape.borderRadius,
+    borderBottomRightRadius: theme.shape.borderRadius,
+
     'figure': {
       display: 'none',
-      position: 'relative',
-      flex: '0 0 auto',
-      right: theme.spacing(-4),
-      top: 0,
-      padding: 0,
-      borderTopRightRadius: theme.shape.borderRadius,
-      borderBottomRightRadius: theme.shape.borderRadius,
-      overflow: 'hidden',
       lineHeight: 0,
-      textAlign: 'right',
-      marginTop: theme.spacing(-12.5),
-      marginBottom: theme.spacing(-4),
-      marginLeft: 'auto',
-      [theme.breakpoints.up('sm')]: { display: 'block' },
+      margin: '-6.3em 0 0 auto',
+      [theme.breakpoints.up('sm')]: { display: 'inline-block' },
 
-      'img': { width: '13.45rem' }
+      'img': { width: '13.75rem' }
     },
   },
 }));
@@ -63,11 +56,9 @@ export default function PostHeader({ id = 'content-header', title, posts, showHe
         <h1>{ DOMPurify.sanitize(title) }</h1>
 
         {posts?.map((post: PostType) => (
-          <div
-            style={{ display: 'flex', width: '100%' }}
-            key={post.id}
-            dangerouslySetInnerHTML={ safeHtml(post.content) }
-          />
+          <div key={post.id} style={{ display: 'flex', width: '100%' }}>
+            <HtmlContent html={ post.content } />
+          </div>
         ))}
       </div>
       <PostHeaderSocial/>

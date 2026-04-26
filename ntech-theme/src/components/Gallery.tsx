@@ -6,6 +6,7 @@ import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import Captions from 'yet-another-react-lightbox/plugins/captions';
+import { safeHtml } from '@/utils/template';
 
 import 'swiper/css';
 import 'swiper/css/effect-flip';
@@ -17,6 +18,13 @@ type GalleryImage = {
   url: string;
   alt?: string;
   caption?: string;
+  width?: number;
+  height?: number;
+  aspectRatio?: string;
+  linkDestination?: string;
+  href?: string;
+  target?: string;
+  lightbox?: boolean;
 };
 
 type GalleryProps = {
@@ -30,7 +38,7 @@ const SwiperWrapper = styled('div')(({ theme }) => ({
   gap: theme.spacing(4),
   flexWrap: 'wrap',
   margin: theme.spacing(4, 0),
-  [theme.breakpoints.up('md')]: { display: 'flex' },
+  [theme.breakpoints.up('sm')]: { display: 'flex' },
   '.swiper-gallery__description': {
     flex: 2,
     'h1, h2, h3, h4': { marginTop: 0 }
@@ -41,13 +49,19 @@ const SwiperRoot = styled('div')(({ theme }) => ({
   position: 'relative',
   textAlign: 'center',
   zIndex: 0,
+  minWidth: 0,
+  width: '100%',
   flex: 3,
+  marginBottom: theme.spacing(2),
+  [theme.breakpoints.up('sm')]: {
+    marginBottom: 0,
+    width: '50vw'
+  },
   '&:hover': {
     '.swiper-button-prev, .swiper-button-next': { opacity: 0.5 },
   },
-  '.swiper-wrapper': {
-    alignItems: 'flex-end',
-  },
+  '.swiper-gallery__container': { paddingBottom: theme.spacing(4) },
+  '.swiper-pagination': { bottom: 0 },
   '.swiper-pagination-bullet': { backgroundColor: 'var(--mui-palette-indicator_bg)' },
   '.swiper-pagination-bullet-active': { backgroundColor: theme.palette.primary.main },
   '.swiper-button-prev, .swiper-button-next': {
@@ -55,9 +69,11 @@ const SwiperRoot = styled('div')(({ theme }) => ({
     backgroundColor: 'rgba(0, 0, 0, 0)',
     padding: theme.spacing(1, 0),
     transition: 'opacity 0.25s ease-in-out, background-color 0.25s ease-in-out',
+    borderRadius: theme.shape.borderRadius,
     '&:hover': {
       opacity: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.2)',
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+      backdropFilter: 'blur(5px) saturate(200%)',
     },
     'svg': {
       color: theme.palette.primary.main,
@@ -66,24 +82,64 @@ const SwiperRoot = styled('div')(({ theme }) => ({
   },
   '.swiper-slide': {
     lineHeight: 0,
-    '&__image': {
-      width: '100%',
-      height: 'auto',
-      objectFit: 'cover',
-      objectPosition: 'center',
-    },
-    '&__caption': {
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      padding: '1rem',
-      color: '#fff',
-      backgroundColor: 'rgba(0, 0, 0, 0.6)',
-      margin: 0
+    height: 'auto',
+  }
+}));
+
+const MediaFrame = styled('div')(({ theme }) => ({
+  position: 'relative',
+  overflow: 'hidden',
+  width: '100%',
+  minHeight: '10rem',
+  maxHeight: '22rem',
+  backgroundColor: 'var(--mui-palette-post_header_bg)',
+
+  img: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    objectPosition: 'top',
+    display: 'block',
+  },
+
+  '.swiper-slide__caption': {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: theme.spacing(1),
+    color: theme.palette.common.white,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backdropFilter: 'blur(5px) saturate(200%)',
+    margin: 0,
+    lineHeight: 1.4,
+
+    p: {
+      margin: 0,
+      color: 'inherit',
     }
   }
 }));
+
+function normalizeAspectRatio(value?: string) {
+  if (!value) return undefined;
+
+  const normalized = value.trim().replace(/\s+/g, '');
+  if (!normalized) return undefined;
+
+  if (/^\d+(\.\d+)?$/.test(normalized)) {
+    return normalized;
+  }
+
+  const match = normalized.match(/^(\d+(?:\.\d+)?)[/:](\d+(?:\.\d+)?)$/);
+  if (!match) return undefined;
+
+  return `${match[1]} / ${match[2]}`;
+}
+
+function getAspectRatio(image: GalleryImage) {
+  return normalizeAspectRatio(image.aspectRatio) || (image.width && image.height ? `${image.width} / ${image.height}` : undefined) || '4 / 3';
+}
 
 export default function Gallery({ images, children }: GalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -99,37 +155,60 @@ export default function Gallery({ images, children }: GalleryProps) {
   return (
     <SwiperWrapper>
       <SwiperRoot className="swiper-gallery">
-        <Swiper
-          modules={[Pagination, Navigation]}
-          slidesPerView='auto'
-          loop={true}
-          pagination={{
-            clickable: true,
-          }}
-          navigation={true}
-          className="swiper-gallery__container"
-        >
-          {images.map((image, index) => (
-            <SwiperSlide key={image.id} className="swiper-slide">
-              <img
-                src={image.url}
-                alt={image.alt || ''}
-                onClick={() => openLightbox(index)}
-                className="swiper-slide__image"
-                loading="lazy"
-              />
-              { image.caption && <p className="swiper-slide__caption">{ image.caption }</p> }
-              <div className="swiper-lazy-preloader swiper-lazy-preloader-white"></div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        <div className="swiper-gallery__viewport">
+          <Swiper
+            modules={[Pagination, Navigation]}
+            slidesPerView={1}
+            spaceBetween={10}
+            loop={true}
+            pagination={{ clickable: true }}
+            navigation={true}
+            className="swiper-gallery__container"
+          >
+            {images.map((image, index) => (
+              <SwiperSlide key={image.id} className="swiper-slide">
+                <MediaFrame style={{ aspectRatio: getAspectRatio(image) }}>
+                  <img
+                    src={image.url}
+                    alt={image.alt || ''}
+                    onClick={() => {
+                      if (image.lightbox) {
+                        openLightbox(index);
+                        return;
+                      }
+
+                      if (image.linkDestination === 'custom' && image.href) {
+                        window.open(image.href, image.target || '_self');
+                        return;
+                      }
+
+                      if (image.linkDestination === 'media') {
+                        openLightbox(index);
+                        return;
+                      }
+
+                      if (image.linkDestination === 'attachment' && image.href) {
+                        window.location.href = image.href;
+                      }
+                    }}
+                    className="swiper-slide__image"
+                    loading="eager"
+                    style={{ cursor: image.lightbox || (image.linkDestination === 'custom' && image.href) || image.linkDestination === 'attachment' || image.linkDestination === 'media' ? 'pointer' : 'default' }}
+                  />
+                  { image.caption && <p className="swiper-slide__caption" dangerouslySetInnerHTML={ safeHtml(image.caption) } /> }
+                  <div className="swiper-lazy-preloader swiper-lazy-preloader-white"></div>
+                </MediaFrame>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
 
         <Lightbox
           open={lightboxOpen}
           close={() => setLightboxOpen(false)}
           index={lightboxIndex}
           controller={{ closeOnBackdropClick: true }}
-          slides={images.map((img) => ({ src: img.url, alt: img.alt, title: img.caption }))}
+          slides={images.map((img) => ({ src: img.url, alt: img.alt, title: (<span dangerouslySetInnerHTML={ safeHtml(img.caption) } />) }))}
           plugins={[Zoom, Captions]}
         />
       </SwiperRoot>
