@@ -209,3 +209,8 @@ add_action('wp_enqueue_scripts', 'enqueue_react_assets');
 add_action('graphql_register_types', 'register_types');
 
 add_filter('template_include', 'force_spa_template', 9999);
+
+// Disable WP Image srcset, resize and lazy loading to use a headless version
+add_filter('wp_calculate_image_srcset', '__return_false');
+add_filter('wp_calculate_image_sizes', '__return_false');
+add_filter('wp_lazy_loading_enabled', '__return_false');

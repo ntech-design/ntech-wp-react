@@ -2,7 +2,7 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import { PostType } from '@/types/wordpress';
 import PostHeaderSocial from '@/components/PostHeaderSocial';
-import { safeHtml } from '@/utils/template';
+import HtmlContent from "@/components/HtmlContent";
 
 type PostHeroProps = {
   id?: string;
@@ -64,10 +64,9 @@ export default function PostHero({ id = 'content-header', posts }: PostHeroProps
     <PostHeroRoot id={id}>
       <div className='post-hero'>
         {posts?.map((post: PostType) => (
-          <div
-            key={post.id}
-            dangerouslySetInnerHTML={ safeHtml(post.content) }
-          />
+          <div key={post.id}>
+            <HtmlContent html={ post.content } />
+          </div>
         ))}
       </div>
       <PostHeaderSocial position="right" width={250} />

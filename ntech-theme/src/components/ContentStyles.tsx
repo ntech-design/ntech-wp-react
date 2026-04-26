@@ -47,6 +47,7 @@ const ContentWrapper = styled('div')(({ theme }) => ({
     li: {
       paddingLeft: theme.spacing(1),
       marginLeft: `calc(${theme.spacing(2)} + 1px)`,
+      marginBottom: theme.spacing(0.5),
     },
 
     '&.list-icon': {
@@ -57,11 +58,11 @@ const ContentWrapper = styled('div')(({ theme }) => ({
         justifyContent: 'flex-start',
         padding: 0,
         marginLeft: 0,
-        marginBottom: `calc(${theme.spacing(1)} / 2)`,
+        marginBottom: theme.spacing(0.75),
         '> .icon': {
           display: 'inline-flex',
-          fontSize: theme.typography.h2.fontSize,
-          marginRight: `calc(${theme.spacing(1)} / 2)`,
+          fontSize: theme.typography.h3.fontSize,
+          marginRight: theme.spacing(1),
         }
       }
     }
@@ -221,13 +222,13 @@ const ContentWrapper = styled('div')(({ theme }) => ({
       fontWeight: theme.typography.fontWeightBold,
       borderBottom: `1px solid ${theme.palette.divider}`,
       margin: theme.spacing(0, 0,3,0),
-      paddingTop: theme.spacing(3),
       lineHeight: '2.5rem',
 
       [theme.breakpoints.up('md')]: {
         fontSize: theme.typography.h3.fontSize,
         fontWeight: theme.typography.fontWeightMedium,
         color: theme.palette.primary.main,
+        paddingTop: theme.spacing(3)
       }
     }
   }
