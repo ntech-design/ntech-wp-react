@@ -20,12 +20,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 const Page = React.lazy(() => import('@/components/Page'));
 
-const Layout = styled('div')({
+const Layout = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  minHeight: '100dvh',
+  minHeight: 'calc(100dvh - 29.75rem)',
   backgroundColor: 'var(--mui-palette-background-default)',
-});
+  [theme.breakpoints.up('sm')]: { minHeight: 'calc(100dvh - 7.55rem)' },
+}));
 
 function AppRoutes() {
   const location = useLocation();
