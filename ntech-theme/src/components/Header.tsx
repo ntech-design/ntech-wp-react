@@ -39,15 +39,14 @@ const MotionBox = motion.create(Box);
 
 const HeaderRoot = styled('header')(({ theme }) => ({
   position: 'relative',
-  left: 0,
-  right: 0,
+  top: 0,
   fontFamily: theme.typography.fontFamily,
   fontWeight: theme.typography.fontWeightMedium,
   fontSize: '0.95rem',
   letterSpacing: '0.035rem',
   color: 'var(--mui-palette-header_color)',
   zIndex: 1,
-  [theme.breakpoints.up('sm')]: { position: 'fixed' },
+  [theme.breakpoints.up('sm')]: { position: 'sticky' },
 
   '&::before': {
     content: '""',

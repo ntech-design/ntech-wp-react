@@ -1,6 +1,6 @@
 {
   "name": "n-tech_react_theme",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "React theme based on WordPress",
   "main": "./src/index.tsx",
   "scripts": {
