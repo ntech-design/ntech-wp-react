@@ -5,10 +5,7 @@ import icon_linkedin from '@/assets/icons/linkedin.svg';
 import icon_github from '@/assets/icons/github.svg';
 
 const ContentWrapper = styled('div')(({ theme }) => ({
-  [theme.breakpoints.up('sm')]: {
-    paddingTop: '12.25rem', // Static header height
-    margin: theme.spacing(0, 3),
-  },
+  [theme.breakpoints.up('sm')]: { margin: theme.spacing(0, 3) },
 
   // Typography
   h1: {
