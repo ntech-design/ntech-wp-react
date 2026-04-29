@@ -8,7 +8,11 @@ import ErrorPage from '@/pages/ErrorPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import DOMPurify from 'dompurify';
 
-const Page = () => {
+type PageProps = {
+  onReady?: () => void;
+};
+
+const Page = ({ onReady }: PageProps) => {
   const location = useLocation();
   useScrollToTop();
   useScrollToHash(location.hash);
@@ -21,6 +25,13 @@ const Page = () => {
     loading,
     error,
   } = usePage();
+
+  /**
+   * Set Loading state
+   */
+  useEffect(() => {
+    if (!loading && page) onReady?.();
+  }, [loading, page, onReady]);
 
   /**
    * Document Title
@@ -36,7 +47,7 @@ const Page = () => {
   /**
    * Guards
    */
-  if (loading) return null;
+  if (loading) return <div style={{ minHeight: '10px', opacity: 0 }} />;
   if (error) return <ErrorPage error={error} />;
   if (!page) return <NotFoundPage />;
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy, useState, useCallback, ReactNode } from 'react';
 import { ApolloProvider } from '@apollo/client/react';
 import client from '@/apollo/client';
 import { styled } from "@mui/material/styles";
@@ -17,34 +17,67 @@ import Footer from '@/components/Footer';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
-const Page = React.lazy(() => import('@/components/Page'));
+const Page = lazy(() => import('@/components/Page'));
 
 const Layout = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  minHeight: '100dvh',
   backgroundColor: 'var(--mui-palette-background-default)',
 });
 
+function PageWrapper({ children }: { children: ReactNode }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.5, ease: 'easeInOut' }}
+      style={{
+        height: '100%'
+      }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
 function AppRoutes() {
   const location = useLocation();
-  const [isRouteChanging, setIsRouteChanging] = React.useState<boolean>(false);
+  const [displayLocation, setDisplayLocation] = useState(location);
+  const [pendingLocation, setPendingLocation] = useState<typeof location | null>(null);
+  const [showLoader, setShowLoader] = useState<boolean>(false);
 
   React.useEffect(() => {
-    setIsRouteChanging(true);
+    if (location.pathname !== displayLocation.pathname) {
+      setPendingLocation(location);
+    }
+  }, [location, displayLocation]);
 
-    const timer = setTimeout(() => {
-      setIsRouteChanging(false);
-    }, 250);
+  const handlePageReady = useCallback(() => {
+    if (pendingLocation) {
+      setDisplayLocation(pendingLocation);
+      setPendingLocation(null);
+    }
+  }, [pendingLocation]);
 
-    return () => clearTimeout(timer);
-  }, [location.pathname]);
+  React.useEffect(() => {
+    let delayTimer: ReturnType<typeof setTimeout>;
+
+    setShowLoader(true);
+    if (!pendingLocation) {
+      delayTimer = setTimeout(() => { setShowLoader(false); }, 300);
+    }
+
+    return () => {
+      clearTimeout(delayTimer);
+    };
+  }, [pendingLocation]);
 
   return (
     <ErrorBoundary>
       {/* Global Route Loader */}
-      <AnimatePresence>
-        {isRouteChanging && (
+      <AnimatePresence mode="wait">
+        {showLoader && (
           <motion.div
             key="route-loader"
             initial={{ opacity: 0 }}
@@ -64,29 +97,27 @@ function AppRoutes() {
         )}
       </AnimatePresence>
 
-      {/* Page Transition mit AnimatePresence */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={location.pathname}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.35, ease: 'easeInOut' }}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            backgroundColor: 'var(--mui-palette-background-default)',
-            width: '100%',
-            flex: 1,
-          }}
-        >
+      <Layout style={{ width: '100%', flex: 1 }}>
+        <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Page />} />
-            <Route path="/:slug" element={<Page />} />
+            <Route path="/" element={
+              <Suspense fallback={null}>
+                <PageWrapper>
+                  <Page onReady={handlePageReady} />
+                </PageWrapper>
+              </Suspense>
+            } />
+            <Route path="/:slug" element={
+              <Suspense fallback={null}>
+                <PageWrapper>
+                  <Page onReady={handlePageReady} />
+                </PageWrapper>
+              </Suspense>
+            } />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
-        </motion.div>
-      </AnimatePresence>
+        </AnimatePresence>
+      </Layout>
     </ErrorBoundary>
   );
 }
@@ -100,7 +131,7 @@ export default function App() {
         <CssBaseline />
         <ApolloProvider client={ client }>
           <BrowserRouter>
-            <Layout id="site-layout">
+            <Layout id="site-layout" style={{ minHeight: '100dvh' }}>
               <Header />
               <AppRoutes />
               <Footer />

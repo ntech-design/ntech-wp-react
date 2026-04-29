@@ -1,12 +1,14 @@
+import React, { Suspense, lazy } from 'react';
 import { styled } from '@mui/material/styles';
 import { LayoutType } from '@/types/wordpress';
 import { wpText } from '@/utils/template';
 
 import Container from '@mui/material/Container';
-import ScrollTop from '@/components/ScrollTop';
-import PostContent from '@/components/PostContent';
-import PostHero from '@/components/PostHero';
 import ContentStyles from '@/components/ContentStyles';
+
+const PostHero = lazy(() => import('@/components/PostHero'));
+const PostContent = lazy(() => import('@/components/PostContent'));
+const ScrollTop = lazy(() => import('@/components/ScrollTop'));
 
 const MainContent = styled('main')(({ theme }) => ({
   display: 'block',
@@ -22,14 +24,20 @@ function LayoutHome({ page, headerPosts, contentPosts, loading = false }: Layout
     <>
       <Container id="site-content" sx={{ flexGrow: 1 }}>
         <ContentStyles id="content-wrapper">
-          <PostHero title={ wpText(page.title) } posts={ headerPosts } />
+          <Suspense fallback={null}>
+            <PostHero title={ wpText(page.title) } posts={ headerPosts } />
+          </Suspense>
           <MainContent role='main'>
-            <PostContent posts={ contentPosts } content={ wpText(page.content) } />
+            <Suspense fallback={null}>
+              <PostContent posts={ contentPosts } content={ wpText(page.content) } />
+            </Suspense>
           </MainContent>
         </ContentStyles>
       </Container>
 
-      <ScrollTop />
+      <Suspense fallback={null}>
+        <ScrollTop />
+      </Suspense>
     </>
   );
 }

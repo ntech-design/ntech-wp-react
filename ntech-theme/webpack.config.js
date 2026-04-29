@@ -1,7 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
+const packageJson = require('./package.json');
 
 module.exports = (env) => {
   const config = {
@@ -17,9 +19,7 @@ module.exports = (env) => {
         {
           test:  /.(js|jsx)$/,
           exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-          },
+          use: { loader: 'babel-loader' },
         },
         {
           test: /.(ts|tsx)$/,
@@ -53,7 +53,7 @@ module.exports = (env) => {
         },
         {
           test: /\.(png|jpg|jpeg|gif)$/,
-          type: 'asset',
+          type: 'asset/resource',
           parser: {
             dataUrlCondition: {
               maxSize: 8 * 1024,
@@ -66,13 +66,45 @@ module.exports = (env) => {
         },
         {
           test: /\.svg$/,
-          type: 'asset/resource',
+          oneOf: [
+            {
+              resourceQuery: /url/,
+              type: 'asset/resource',
+            },
+            {
+              issuer: /\.[jt]sx?$/,
+              resourceQuery: { not: [/url/] },
+              use: ['@svgr/webpack'],
+            },
+            {
+              type: 'asset/resource',
+            },
+          ],
         },
       ]
     },
     plugins: [
+      new webpack.DefinePlugin({
+        'process.env.APP_VERSION': JSON.stringify(packageJson.version),
+      }),
+      new WebpackManifestPlugin({
+        fileName: 'asset-manifest.json',
+        publicPath: '',
+        writeToFileEmit: true,
+        generate: (seed, files) => {
+          const manifest = {};
+          files.forEach(file => {
+            if (file.name) {
+              manifest[file.name] = file.path;
+            }
+          });
+          return manifest;
+        }
+      }),
+
       new MiniCssExtractPlugin({
-        filename: 'main.css',
+        filename: env.production ? '[name].[contenthash:8].css' : '[name].css',
+        chunkFilename: env.production ? '[id].[contenthash:8].css' : '[id].css',
       }),
 
       new webpack.DefinePlugin({
@@ -83,15 +115,9 @@ module.exports = (env) => {
         },
       }),
 
-      new BrowserSyncPlugin({
-        proxy: {
-          target: 'http://localhost:8080'
-        },
-        files:[
-          '**/*.php',
-          './dist/**/*.css',
-          './dist/**/*.js'
-        ],
+      !env.production && new BrowserSyncPlugin({
+        proxy: { target: 'http://localhost:8080' },
+        files:['**/*.php', './dist/**/*.css', './dist/**/*.js'],
         ui: { port: 3001 },
         cors: true,
         notify: true,
@@ -103,21 +129,52 @@ module.exports = (env) => {
         open: true,
         injectCss: true
       }),
-    ],
+    ].filter(Boolean),
+
+    optimization: {
+      moduleIds: 'deterministic',
+      chunkIds: env.production ? 'deterministic' : 'named',
+      runtimeChunk: env.production ? 'single' : false,
+      splitChunks: {
+        chunks: env.production ? 'all' : 'async',
+        name: false,
+        cacheGroups: env.production ? {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+            priority: 20,
+          },
+        } : undefined,
+      },
+    },
   },
 
-  mainConfig = Object.assign({}, config, {
+  mainConfig = {
+    ...config,
     name: 'main',
     devtool: env.production ? 'hidden-source-map' : 'inline-source-map',
     mode: env.production ? 'production' : 'development',
     entry: path.resolve(__dirname, './src/index.tsx'),
     output: {
-      filename: 'main.js',
+      filename: env.production ? '[name].[contenthash:8].js' : '[name].js',
+      chunkFilename: env.production ? '[name].[contenthash:8].chunk.js' : '[name].chunk.js',
       path: path.resolve(__dirname, './dist'),
       publicPath: 'auto',
-      clean: !env.production
-    }
-  });
+      clean: true
+    },
+
+    optimization: {
+      moduleIds: 'deterministic',
+      chunkIds: 'deterministic',
+
+      runtimeChunk: env.production ? 'single' : false,
+      splitChunks: {
+        chunks: 'async',
+        name: false,
+      },
+    },
+  };
 
   return [mainConfig];
 };

@@ -1,20 +1,19 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import parse, { HTMLReactParserOptions } from 'html-react-parser';
 import { wpText } from '@/utils/template';
-
-import PersistImage from '@/components/PersistImage';
 import { safeHtml } from '@/utils/template';
 
 type HtmlContentProps = {
   html?: { rendered?: string } | string;
 };
 
+const PersistImage = lazy(() => import('@/components/PersistImage'));
+
 export default function HtmlContent({ html }: HtmlContentProps) {
   const content = wpText(html);
   if (!content) return null;
 
   const clean = safeHtml(content);
-
   const options: HTMLReactParserOptions = {
     replace(node) {
       if (node.type === 'tag' && node.name === 'img') {
@@ -28,13 +27,15 @@ export default function HtmlContent({ html }: HtmlContentProps) {
         if (!src) return null;
 
         return (
-          <PersistImage
-            src={src}
-            alt={alt}
-            width={width}
-            height={height}
-            className={className}
-          />
+          <Suspense fallback={null}>
+            <PersistImage
+              src={src}
+              alt={alt}
+              width={width}
+              height={height}
+              className={className}
+            />
+          </Suspense>
         );
       }
     },

@@ -1,7 +1,6 @@
+import React, { Fragment, Suspense, lazy } from 'react';
 import { useQuery } from '@apollo/client/react';
-import React from 'react';
 import { GET_ALL_ATTRIBUTES } from '@/apollo/queries/attributes';
-import Attribute from '@/components/Attribute';
 
 interface AttributeNode {
   title: string;
@@ -14,12 +13,13 @@ interface AttributesData {
   };
 }
 
+const Attribute = lazy(() => import('@/components/Attribute'));
 const AttributesContainer = () => {
   const { loading, error, data } = useQuery<AttributesData>(GET_ALL_ATTRIBUTES);
   const attributesFound = Boolean(data?.attributes?.nodes?.length);
 
   return (
-    <React.Fragment>
+    <Fragment>
       <div id="frontPagePosts" className="container">
         <h1>Attributes</h1>
 
@@ -30,12 +30,14 @@ const AttributesContainer = () => {
         ) : (
           <div className="flex flex-wrap">
             {data?.attributes?.nodes?.map((attribute, index) => (
-              <Attribute title={attribute.title} key={index} />
+              <Suspense fallback={null}>
+                <Attribute title={attribute.title} key={index} />
+              </Suspense>
             ))}
           </div>
         )}
       </div>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

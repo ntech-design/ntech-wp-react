@@ -1,8 +1,8 @@
 import { styled } from '@mui/material/styles';
 import shadow from '@/assets/images/shadow_button.png'
-import icon_xing from '@/assets/icons/xing.svg';
-import icon_linkedin from '@/assets/icons/linkedin.svg';
-import icon_github from '@/assets/icons/github.svg';
+import icon_xing from '@/assets/icons/xing.svg?url';
+import icon_linkedin from '@/assets/icons/linkedin.svg?url';
+import icon_github from '@/assets/icons/github.svg?url';
 
 const ContentWrapper = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('sm')]: { margin: theme.spacing(0, 3) },

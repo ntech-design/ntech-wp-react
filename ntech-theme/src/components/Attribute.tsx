@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { safeHtml } from '@/utils/template';
 
 interface AttributeProps {
@@ -8,7 +8,7 @@ interface AttributeProps {
 
 const Attribute = (props: AttributeProps) => {
   return (
-    <React.Fragment>
+    <Fragment>
       <div className="attribute" >
         <div className="attribute__icon">
           <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-6 h-6" viewBox="0 0 24 24">
@@ -19,7 +19,7 @@ const Attribute = (props: AttributeProps) => {
           <h2 className="attribute__title" dangerouslySetInnerHTML={ safeHtml(props.title) } />
         </div>
       </div>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
