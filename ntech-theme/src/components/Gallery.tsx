@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
@@ -144,6 +144,7 @@ function getAspectRatio(image: GalleryImage) {
 export default function Gallery({ images, children }: GalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [loadedImages, setLoadedImages] = useState<{ [key: string]: boolean }>({});
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
@@ -151,6 +152,17 @@ export default function Gallery({ images, children }: GalleryProps) {
   };
 
   if (!images?.length) return null;
+
+  // Preload all images
+  useEffect(() => {
+    images.forEach((image) => {
+      const img = new Image();
+      img.src = image.url;
+      img.onload = () => {
+        setLoadedImages((prev) => ({ ...prev, [image.id]: true }));
+      };
+    });
+  }, [images]);
 
   return (
     <SwiperWrapper>
@@ -168,6 +180,16 @@ export default function Gallery({ images, children }: GalleryProps) {
             {images.map((image, index) => (
               <SwiperSlide key={image.id} className="swiper-slide">
                 <MediaFrame style={{ aspectRatio: getAspectRatio(image) }}>
+                  {!loadedImages[image.id] && (
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'var(--mui-palette-indicator_bg)',
+                      }}
+                    />
+                  )}
+
                   <img
                     src={image.url}
                     alt={image.alt || ''}
@@ -193,7 +215,17 @@ export default function Gallery({ images, children }: GalleryProps) {
                     }}
                     className="swiper-slide__image"
                     loading="eager"
-                    style={{ cursor: image.lightbox || (image.linkDestination === 'custom' && image.href) || image.linkDestination === 'attachment' || image.linkDestination === 'media' ? 'pointer' : 'default' }}
+                    style={{
+                      opacity: loadedImages[image.id] ? 1 : 0,
+                      transition: 'opacity 0.4s ease',
+                      position: loadedImages[image.id] ? 'relative' : 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      cursor: image.lightbox || (image.linkDestination === 'custom' && image.href) || image.linkDestination === 'attachment' || image.linkDestination === 'media' ? 'pointer' : 'default'
+                    }}
                   />
                   { image.caption && <p className="swiper-slide__caption" dangerouslySetInnerHTML={ safeHtml(image.caption) } /> }
                   <div className="swiper-lazy-preloader swiper-lazy-preloader-white"></div>

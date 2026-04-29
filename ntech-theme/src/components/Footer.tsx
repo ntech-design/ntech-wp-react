@@ -22,6 +22,8 @@ interface FooterData {
   menu: FooterMenu | null;
 }
 
+const version: string | undefined = process.env.APP_VERSION;
+
 const FooterRoot = styled('footer')(({ theme }) => ({
   paddingTop: theme.spacing(2),
   paddingBottom: theme.spacing(2),
@@ -30,6 +32,20 @@ const FooterRoot = styled('footer')(({ theme }) => ({
   backgroundColor: 'var(--mui-palette-footer_bg)',
   marginTop: theme.spacing(4),
   fontSize: '0.95rem',
+
+  '.footer__wrapper': {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    [theme.breakpoints.up('sm')]: { justifyContent: 'space-between' }
+  },
+
+  '.footer__version': {
+    display: 'none',
+    color: theme.palette.muted,
+    opacity: 0.5,
+    [theme.breakpoints.up('sm')]: { display: 'inline' }
+  },
 
   '.footer__navigation': {
     display: 'flex',
@@ -66,9 +82,7 @@ function Footer() {
   if (loading) return (
     <FooterRoot>
       <Container>
-        <div className="footer__navigation">
-          &nbsp;
-        </div>
+        <div className="footer__navigation">&nbsp;</div>
       </Container>
     </FooterRoot>
   );
@@ -77,7 +91,8 @@ function Footer() {
 
   return (
     <FooterRoot id="site-footer">
-      <Container>
+      <Container className="footer__wrapper">
+        <span className="footer__version" aria-hidden="true">Version: {version}</span>
         <nav className="footer__navigation" role="navigation">
           {data.menu.menuItems.nodes.map((item) => (
             <Link

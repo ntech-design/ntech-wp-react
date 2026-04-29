@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import DOMPurify from 'dompurify';
 import { styled } from '@mui/material/styles';
 import { PostType } from '@/types/wordpress';
-import PostHeaderSocial from '@/components/PostHeaderSocial';
 import HtmlContent from '@/components/HtmlContent';
 
 type PostHeaderProps = {
@@ -12,6 +11,7 @@ type PostHeaderProps = {
   showHeader?: boolean;
 }
 
+const PostHeaderSocial = lazy(() => import('@/components/PostHeaderSocial'));
 const PostHeaderRoot = styled('header')(({ theme }) => ({
   position: 'relative',
   border: '1px solid var(--mui-palette-post_header_color_border)',
@@ -61,7 +61,9 @@ export default function PostHeader({ id = 'content-header', title, posts, showHe
           </div>
         ))}
       </div>
-      <PostHeaderSocial/>
+      <Suspense fallback={null}>
+        <PostHeaderSocial/>
+      </Suspense>
     </PostHeaderRoot>
   );
 }

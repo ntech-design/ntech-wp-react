@@ -1,13 +1,15 @@
+import React, { Suspense, lazy } from 'react';
 import { styled } from '@mui/material/styles';
 import { LayoutType } from '@/types/wordpress';
 import { wpText } from '@/utils/template';
 
 import Container from '@mui/material/Container';
-import ScrollTop from '@/components/ScrollTop';
-import PostSidebar from '@/components/PostSidebar';
-import PostContent from '@/components/PostContent';
-import PostHeader from '@/components/PostHeader';
 import ContentStyles from '@/components/ContentStyles';
+
+const PostHeader = lazy(() => import('@/components/PostHeader'));
+const PostSidebar = lazy(() => import('@/components/PostSidebar'));
+const PostContent = lazy(() => import('@/components/PostContent'));
+const ScrollTop = lazy(() => import('@/components/ScrollTop'));
 
 const MainContent = styled('main')(({ theme }) => ({
   display: 'block',
@@ -23,15 +25,23 @@ function LayoutStatic({ page, headerPosts, contentPosts, sidebarPosts, loading =
     <>
       <Container id="site-content" sx={{ flexGrow: 1 }}>
         <ContentStyles id="content-wrapper">
-          <PostHeader title={ wpText(page.title) } posts={ headerPosts } showHeader={ false } />
+          <Suspense fallback={null}>
+            <PostHeader title={ wpText(page.title) } posts={ headerPosts } showHeader={ false } />
+          </Suspense>
           <MainContent role='main'>
-            <PostContent posts={ contentPosts } content={ wpText(page.content) } />
-            <PostSidebar posts={ sidebarPosts } />
+            <Suspense fallback={null}>
+              <PostContent posts={ contentPosts } content={ wpText(page.content) } />
+            </Suspense>
+            <Suspense fallback={null}>
+              <PostSidebar posts={ sidebarPosts } />
+            </Suspense>
           </MainContent>
         </ContentStyles>
       </Container>
 
-      <ScrollTop />
+      <Suspense fallback={null}>
+        <ScrollTop />
+      </Suspense>
     </>
   );
 }

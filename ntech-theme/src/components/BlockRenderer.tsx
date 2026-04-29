@@ -1,16 +1,17 @@
-import React, { JSX, useMemo } from 'react';
+import React, { JSX, Suspense, lazy, useMemo } from 'react';
 import DOMPurify from 'dompurify';
 import { WordPressBlock, CoreImageBlock } from '@/types/content';
 
 import HtmlContent from '@/components/HtmlContent';
-import Gallery from '@/components/Gallery';
-import PersistImage from '@/components/PersistImage';
 import { getIcon } from '@/components/IconRenderer';
 import { parseAspectRatioValue, safeHtml } from '@/utils/template';
 
 type BlockRendererProps = {
   blocks: WordPressBlock[];
 };
+
+const Gallery = lazy(() => import('@/components/Gallery'));
+const PersistImage = lazy(() => import('@/components/PersistImage'));
 
 function getGalleryAspectRatios(renderedHtml?: string) {
   if (!renderedHtml || typeof DOMParser === 'undefined') return [];
@@ -45,10 +46,7 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
   const consumedBlocks = useMemo(() => new Set<string>(), []);
   const renderBlock = (block: WordPressBlock, index: number, allBlocks: WordPressBlock[]): React.ReactNode => {
     if (!block) return null;
-
-    if (consumedBlocks.has(block.clientId)) {
-      return null;
-    }
+    if (consumedBlocks.has(block.clientId)) return null;
 
     switch (block.name) {
       case 'core/gallery': {
@@ -85,15 +83,16 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
         }
 
         return (
-          <Gallery key={block.clientId} images={imageData} columns={Number(block.attributes.columns) || 1}>
-            { descriptionContent }
-          </Gallery>
+          <Suspense key={block.clientId} fallback={null}>
+            <Gallery images={imageData} columns={Number(block.attributes.columns) || 1}>
+              { descriptionContent }
+            </Gallery>
+          </Suspense>
         );
       }
 
       case 'core/image': {
         const attrs = block.attributes || {};
-
         const src = typeof attrs.url === 'string' ? attrs.url : '';
         if (!src) return null;
 
@@ -102,13 +101,15 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
             key={block.clientId}
             className={attrs.className || 'wp-block-image'}
           >
-            <PersistImage
-              src={ src }
-              alt={ typeof attrs.alt === 'string' ? attrs.alt : '' }
-              width={ typeof attrs.width === 'string' || typeof attrs.width === 'number' ? attrs.width : '' }
-              height={ typeof attrs.height === 'string' || typeof attrs.height === 'number' ? attrs.height : '' }
-              className="wp-image"
-            />
+            <Suspense fallback={null}>
+              <PersistImage
+                src={ src }
+                alt={ typeof attrs.alt === 'string' ? attrs.alt : '' }
+                width={ typeof attrs.width === 'string' || typeof attrs.width === 'number' ? attrs.width : '' }
+                height={ typeof attrs.height === 'string' || typeof attrs.height === 'number' ? attrs.height : '' }
+                className="wp-image"
+              />
+            </Suspense>
           </figure>
         );
       }

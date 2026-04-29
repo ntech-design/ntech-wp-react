@@ -14,6 +14,12 @@ declare module '*.jpeg' {
 }
 
 declare module '*.svg' {
-  const value: string;
-  export default value;
+  import React from 'react';
+  const SVG: React.FC<React.SVGProps<SVGSVGElement> & { title?: string }>;
+  export default SVG;
+}
+
+declare module '*.svg?url' {
+  const src: string;
+  export default src;
 }

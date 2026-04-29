@@ -25,29 +25,48 @@ add_filter('wp_page_menu_args', 'ntech_page_menu_args');
  */
 function enqueue_react_assets() {
     if (is_admin()) return;
+    if (! (is_front_page() || is_page_template('front-page.php') || get_query_var('spa_mode'))) {
+        return;
+    }
 
-    if (is_front_page() || is_page_template('front-page.php') || get_query_var('spa_mode')) {
-        $theme_uri = get_stylesheet_directory_uri();
-        $js_path   = get_stylesheet_directory() . '/dist/main.js';
-        $css_path  = get_stylesheet_directory() . '/dist/main.css';
+    $theme_dir = get_stylesheet_directory();
+    $theme_uri = get_stylesheet_directory_uri();
+    $dist_dir  = $theme_dir . '/dist/';
+    $dist_uri  = $theme_uri . '/dist/';
+    $manifest_path = $dist_dir . 'asset-manifest.json';
 
-        $js_version  = file_exists($js_path)  ? filemtime($js_path)  : '1.0.0';
-        $css_version = file_exists($css_path) ? filemtime($css_path) : '1.0.0';
+    if (!file_exists($manifest_path)) {
+        error_log('React Manifest not found: ' . $manifest_path);
+        return;
+    }
 
-        wp_enqueue_script('theme-script', $theme_uri . '/dist/main.js',  [], $js_version,  true);
-        wp_enqueue_style( 'theme-style',  $theme_uri . '/dist/main.css', [], $css_version);
+    $manifest = json_decode(file_get_contents($manifest_path), true);
 
-        wp_localize_script(
-            'theme-script',
-            'wp_config',
-            [
-                'graphqlEndpoint' => defined('GRAPHQL_ENDPOINT') ? GRAPHQL_ENDPOINT : 'http://localhost:8080/graphql',
-                'restUrl'         => rest_url(),
-                'nonce'           => wp_create_nonce('wp_rest'),
-                'homeUrl'         => home_url(),
-                'themeUrl'        => $theme_uri,
-            ]
-        );
+    if (!$manifest || !is_array($manifest)) {
+        error_log('React Manifest invalid');
+        return;
+    }
+
+    if (!empty($manifest['main.js'])) {
+        wp_enqueue_script('theme-script', $dist_uri . $manifest['main.js'], [], null,  true);
+    }
+
+    if (!empty($manifest['runtime.js'])) {
+        wp_enqueue_script('theme-runtime', $dist_uri . $manifest['runtime.js'], [], null, true);
+    }
+
+    if (!empty($manifest['main.css'])) {
+        wp_enqueue_style( 'theme-style', $dist_uri . $manifest['main.css'], [], null);
+    }
+
+    if (wp_script_is('theme-script', 'enqueued')) {
+        wp_localize_script('theme-script', 'wp_config', [
+            'graphqlEndpoint' => defined('GRAPHQL_ENDPOINT') ? GRAPHQL_ENDPOINT : 'http://localhost:8080/graphql',
+            'restUrl'         => rest_url(),
+            'nonce'           => wp_create_nonce('wp_rest'),
+            'homeUrl'         => home_url(),
+            'themeUrl'        => $theme_uri,
+        ]);
     }
 }
 
@@ -116,6 +135,12 @@ function create_post_type_attributes() {
     ];
 
     register_post_type('attribute', $args);
+}
+
+function deregister_assets() {
+    if (!is_user_logged_in()) {
+        wp_deregister_style( 'dashicons' );
+    }
 }
 
 function register_types() {
@@ -206,6 +231,7 @@ add_action('init', 'create_post_type_attributes', 0);
 
 add_action('admin_notices', 'show_admin_messages');
 add_action('wp_enqueue_scripts', 'enqueue_react_assets');
+add_action('wp_enqueue_scripts', 'deregister_assets', 100);
 add_action('graphql_register_types', 'register_types');
 
 add_filter('template_include', 'force_spa_template', 9999);

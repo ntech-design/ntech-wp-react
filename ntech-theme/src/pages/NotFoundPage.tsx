@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { usePage } from '@/hooks/usePage';
 import { styled } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import ContentStyles from '@/components/ContentStyles';
-import Search from '@/components/Search';
 import { safeHtml } from '@/utils/template';
 
+const Search = lazy(() => import('@/components/Search'));
 const MainContent = styled('main')({
   display: 'block',
   width: '100%',
@@ -29,7 +29,9 @@ function NotFoundPage() {
             </>
           )}
 
-          <Search />
+          <Suspense fallback={null}>
+            <Search />
+          </Suspense>
         </MainContent>
       </ContentStyles>
     </Container>

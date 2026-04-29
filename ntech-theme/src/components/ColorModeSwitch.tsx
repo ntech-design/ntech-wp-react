@@ -34,7 +34,7 @@ export const ColorModeSwitch = (props: ColorModeSwitchProps) => {
   };
 
   return (
-    <IconButton onClick={handleClick} color="inherit" className={props.className}>
+    <IconButton onClick={handleClick} color="inherit" className={props.className} title="Switch Color Mode" aria-label="Switch Color Mode">
       { isDark ? <LightModeIcon /> : <DarkModeIcon /> }
     </IconButton>
   );

@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { styled } from '@mui/material/styles';
 import { PostType } from '@/types/wordpress';
-import PostHeaderSocial from '@/components/PostHeaderSocial';
 import HtmlContent from "@/components/HtmlContent";
 
 type PostHeroProps = {
@@ -10,6 +9,7 @@ type PostHeroProps = {
   posts?: Array<PostType>;
 }
 
+const PostHeaderSocial = lazy(() => import('@/components/PostHeaderSocial'));
 const PostHeroRoot = styled('header')(({ theme }) => ({
   position: 'relative',
   border: '1px solid var(--mui-palette-post_header_color_border)',
@@ -69,7 +69,9 @@ export default function PostHero({ id = 'content-header', posts }: PostHeroProps
           </div>
         ))}
       </div>
-      <PostHeaderSocial position="right" width={250} />
+      <Suspense fallback={null}>
+        <PostHeaderSocial position="right" width={250} />
+      </Suspense>
     </PostHeroRoot>
   );
 }
