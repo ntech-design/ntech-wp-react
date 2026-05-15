@@ -8,7 +8,10 @@ export default [
   {
     ignores: [
       "dist/**",
-      "node_modules/**"
+      "node_modules/**",
+      "src/test/**",
+      "**/*.test.ts",
+      "**/*.test.tsx"
     ]
   },
 

@@ -207,7 +207,7 @@ function Header() {
       <Container>
         <div className='header__container'>
         </div>
-        <nav className="header__navigation" role="navigation">
+        <nav id="side-navigation" className="header__navigation" role="navigation">
           <ul className="header__navigation__menu">
             <li className="header__navigation__item">
               <span className="link">&nbsp;</span>
