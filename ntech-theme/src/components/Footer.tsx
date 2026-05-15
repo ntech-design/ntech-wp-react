@@ -93,7 +93,7 @@ function Footer() {
     <FooterRoot id="site-footer">
       <Container className="footer__wrapper">
         <span className="footer__version" aria-hidden="true">Version: {version}</span>
-        <nav className="footer__navigation" role="navigation">
+        <nav id="footer-navigation" className="footer__navigation" role="navigation">
           {data.menu.menuItems.nodes.map((item) => (
             <Link
               key={item.id}

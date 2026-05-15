@@ -2,7 +2,7 @@ import { createTheme, darken, alpha } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 import { fluidFont } from '@/utils/typography';
 import { common } from '@mui/material/colors';
-import { container } from '@/themes/variables/container';
+import { breakpoints, container } from '@/themes/variables/grid';
 import { colors } from '@/themes/variables/colors';
 import { fontSizes } from '@/themes/variables/typography';
 import { buttonTheme } from '@/themes/components/buttons';
@@ -96,6 +96,12 @@ const brandedTheme = createTheme({
   cssVariables: {
     colorSchemeSelector: 'data'
   },
+
+  breakpoints: {
+    values: breakpoints,
+    unit: 'rem'
+  },
+
   colorSchemes: {
     light: getBaseTokens('light'),
     dark: getBaseTokens('dark'),

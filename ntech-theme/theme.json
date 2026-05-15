@@ -158,7 +158,7 @@
           "fontFace": [
             {
               "src": [
-                "file:./assets/fonts/manrope/Manrope-VariableFont_wght.woff2"
+                "file:./public/fonts/manrope/Manrope-VariableFont_wght.woff2"
               ],
               "fontWeight": "200 800",
               "fontStyle": "normal",
@@ -173,7 +173,7 @@
           "fontFace": [
             {
               "src": [
-                "file:./assets/fonts/fira-code/FiraCode-VariableFont_wght.woff2"
+                "file:./public/fonts/fira-code/FiraCode-VariableFont_wght.woff2"
               ],
               "fontWeight": "300 700",
               "fontStyle": "normal",

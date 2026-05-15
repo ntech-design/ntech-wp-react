@@ -118,6 +118,7 @@ module.exports = (env) => {
       !env.production && new BrowserSyncPlugin({
         proxy: { target: 'http://localhost:8080' },
         files:['**/*.php', './dist/**/*.css', './dist/**/*.js'],
+        port: 3000,
         ui: { port: 3001 },
         cors: true,
         notify: true,
@@ -125,7 +126,6 @@ module.exports = (env) => {
         // logLevel: 'debug',
       }, {
         reload: true,
-        port: 3000,
         open: true,
         injectCss: true
       }),
@@ -136,17 +136,23 @@ module.exports = (env) => {
       chunkIds: env.production ? 'deterministic' : 'named',
       runtimeChunk: env.production ? 'single' : false,
       splitChunks: {
-        chunks: env.production ? 'all' : 'async',
+        chunks: env.production ? 'async' : 'async',
         name: false,
-        cacheGroups: env.production ? {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-            priority: 20,
-          },
-        } : undefined,
+        // cacheGroups: env.production ? {
+        //   vendor: {
+        //     test: /[\\/]node_modules[\\/]/,
+        //     name: 'vendors',
+        //     chunks: 'all',
+        //     priority: 20
+        //   },
+        // } : undefined,
       },
+    },
+    cache: {
+      type: 'filesystem',
+    },
+    watchOptions: {
+      ignored: /node_modules|dist/,
     },
   },
 
@@ -162,18 +168,7 @@ module.exports = (env) => {
       path: path.resolve(__dirname, './dist'),
       publicPath: 'auto',
       clean: true
-    },
-
-    optimization: {
-      moduleIds: 'deterministic',
-      chunkIds: 'deterministic',
-
-      runtimeChunk: env.production ? 'single' : false,
-      splitChunks: {
-        chunks: 'async',
-        name: false,
-      },
-    },
+    }
   };
 
   return [mainConfig];

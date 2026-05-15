@@ -21,23 +21,28 @@ export const fluidFont = (
 ): string => {
   const breakpoints = theme.breakpoints.values;
 
-  const minViewport = breakpoints[minBreakpoint];
-  const maxViewport = breakpoints[maxBreakpoint];
+  const minViewportRaw = breakpoints[minBreakpoint];
+  const maxViewportRaw = breakpoints[maxBreakpoint];
+  const breakpointUnit = theme.breakpoints.unit ?? 'px';
+  const rootFontSize = theme.typography.htmlFontSize ?? 16;
 
-  if (minViewport === undefined || maxViewport === undefined) {
-    throw new Error(
-      `Invalid breakpoint(s): ${minBreakpoint} or ${maxBreakpoint}`
-    );
+  if (minViewportRaw === undefined || maxViewportRaw === undefined) {
+    throw new Error(`Invalid breakpoint(s): ${minBreakpoint} or ${maxBreakpoint}`);
   }
 
-  if (minViewport >= maxViewport) {
-    throw new Error(
-      `minBreakpoint (${minBreakpoint}) must be smaller than maxBreakpoint (${maxBreakpoint})`
-    );
+  if (minViewportRaw >= maxViewportRaw) {
+    throw new Error(`minBreakpoint (${minBreakpoint}) must be smaller than maxBreakpoint (${maxBreakpoint})`);
   }
 
-  const slope = (maxSizePx - minSizePx) / (maxViewport - minViewport);
-  const yAxisIntersection = minSizePx - slope * minViewport;
+  const toPx = (value: number) => {
+    if (breakpointUnit === 'rem') return value * rootFontSize;
+    return value; // px
+  };
+  const minViewportPx = toPx(minViewportRaw);
+  const maxViewportPx = toPx(maxViewportRaw);
+
+  const slope = (maxSizePx - minSizePx) / (maxViewportPx - minViewportPx);
+  const yAxisIntersection = minSizePx - slope * minViewportPx;
 
   const minRem = minSizePx / 16;
   const maxRem = maxSizePx / 16;

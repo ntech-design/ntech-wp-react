@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
+import Skeleton from '@mui/material/Skeleton';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import Lightbox from 'yet-another-react-lightbox';
@@ -32,6 +33,12 @@ type GalleryProps = {
   columns?: number;
   children?: React.ReactNode;
 };
+
+const loadedImageCache = new Set<string>();
+
+function getImageCacheKey(image: GalleryImage) {
+  return String(image.id || image.url);
+}
 
 const SwiperWrapper = styled('div')(({ theme }) => ({
   display: 'block',
@@ -94,12 +101,18 @@ const MediaFrame = styled('div')(({ theme }) => ({
   maxHeight: '22rem',
   backgroundColor: 'var(--mui-palette-post_header_bg)',
 
-  img: {
+  '.swiper-slide__image': {
+    display: 'block',
+    position: 'absolute',
+    top: 0,
+    left: 0,
     width: '100%',
     height: '100%',
+    boxSizing: 'border-box',
     objectFit: 'cover',
     objectPosition: 'top',
-    display: 'block',
+    zIndex: 0,
+    transition: 'opacity 0.4s ease',
   },
 
   '.swiper-slide__caption': {
@@ -121,6 +134,15 @@ const MediaFrame = styled('div')(({ theme }) => ({
   }
 }));
 
+const ImagePlaceholder = styled(Skeleton)({
+  position: 'absolute',
+  inset: 0,
+  width: '100%',
+  height: '100%',
+  transform: 'none',
+  zIndex: 0,
+});
+
 function normalizeAspectRatio(value?: string) {
   if (!value) return undefined;
 
@@ -141,28 +163,36 @@ function getAspectRatio(image: GalleryImage) {
   return normalizeAspectRatio(image.aspectRatio) || (image.width && image.height ? `${image.width} / ${image.height}` : undefined) || '4 / 3';
 }
 
+function isNearActiveSlide(index: number, activeIndex: number, total: number) {
+  if (total <= 3) return true;
+
+  const distance = Math.abs(index - activeIndex);
+  const circularDistance = Math.min(distance, total - distance);
+
+  return circularDistance <= 1;
+}
+
 export default function Gallery({ images, children }: GalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [loadedImages, setLoadedImages] = useState<{ [key: string]: boolean }>({});
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [loadedImages, setLoadedImages] = useState<{ [key: string]: boolean }>(() => (
+    Object.fromEntries(images.map((image) => [getImageCacheKey(image), loadedImageCache.has(getImageCacheKey(image))]))
+  ));
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
     setLightboxOpen(true);
   };
 
-  if (!images?.length) return null;
-
-  // Preload all images
   useEffect(() => {
-    images.forEach((image) => {
-      const img = new Image();
-      img.src = image.url;
-      img.onload = () => {
-        setLoadedImages((prev) => ({ ...prev, [image.id]: true }));
-      };
-    });
+    setActiveIndex(0);
+    setLoadedImages(Object.fromEntries(
+      images.map((image) => [getImageCacheKey(image), loadedImageCache.has(getImageCacheKey(image))])
+    ));
   }, [images]);
+
+  if (!images?.length) return null;
 
   return (
     <SwiperWrapper>
@@ -176,62 +206,66 @@ export default function Gallery({ images, children }: GalleryProps) {
             pagination={{ clickable: true }}
             navigation={true}
             className="swiper-gallery__container"
+            onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
           >
-            {images.map((image, index) => (
-              <SwiperSlide key={image.id} className="swiper-slide">
-                <MediaFrame style={{ aspectRatio: getAspectRatio(image) }}>
-                  {!loadedImages[image.id] && (
-                    <div
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: 'var(--mui-palette-indicator_bg)',
-                      }}
-                    />
-                  )}
+            {images.map((image, index) => {
+              const imageCacheKey = getImageCacheKey(image);
+              const shouldLoadImage = isNearActiveSlide(index, activeIndex, images.length);
+              const isLoaded = Boolean(loadedImages[imageCacheKey]);
+              const shouldRenderImage = shouldLoadImage || isLoaded;
 
-                  <img
-                    src={image.url}
-                    alt={image.alt || ''}
-                    onClick={() => {
-                      if (image.lightbox) {
-                        openLightbox(index);
-                        return;
-                      }
+              return (
+                <SwiperSlide key={image.id} className="swiper-slide">
+                  <MediaFrame style={{ aspectRatio: getAspectRatio(image) }}>
+                    {!isLoaded && (
+                      <ImagePlaceholder
+                        variant="rectangular"
+                        animation="wave"
+                      />
+                    )}
 
-                      if (image.linkDestination === 'custom' && image.href) {
-                        window.open(image.href, image.target || '_self');
-                        return;
-                      }
+                    {shouldRenderImage && (
+                      <img
+                        src={image.url}
+                        alt={image.alt || ''}
+                        onLoad={() => {
+                          loadedImageCache.add(imageCacheKey);
+                          setLoadedImages((prev) => ({ ...prev, [imageCacheKey]: true }));
+                        }}
+                        onClick={() => {
+                          if (image.lightbox) {
+                            openLightbox(index);
+                            return;
+                          }
 
-                      if (image.linkDestination === 'media') {
-                        openLightbox(index);
-                        return;
-                      }
+                          if (image.linkDestination === 'custom' && image.href) {
+                            window.open(image.href, image.target || '_self');
+                            return;
+                          }
 
-                      if (image.linkDestination === 'attachment' && image.href) {
-                        window.location.href = image.href;
-                      }
-                    }}
-                    className="swiper-slide__image"
-                    loading="eager"
-                    style={{
-                      opacity: loadedImages[image.id] ? 1 : 0,
-                      transition: 'opacity 0.4s ease',
-                      position: loadedImages[image.id] ? 'relative' : 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      cursor: image.lightbox || (image.linkDestination === 'custom' && image.href) || image.linkDestination === 'attachment' || image.linkDestination === 'media' ? 'pointer' : 'default'
-                    }}
-                  />
-                  { image.caption && <p className="swiper-slide__caption" dangerouslySetInnerHTML={ safeHtml(image.caption) } /> }
-                  <div className="swiper-lazy-preloader swiper-lazy-preloader-white"></div>
-                </MediaFrame>
-              </SwiperSlide>
-            ))}
+                          if (image.linkDestination === 'media') {
+                            openLightbox(index);
+                            return;
+                          }
+
+                          if (image.linkDestination === 'attachment' && image.href) {
+                            window.location.href = image.href;
+                          }
+                        }}
+                        className="swiper-slide__image"
+                        loading="eager"
+                        style={{
+                          opacity: isLoaded ? 1 : 0,
+                          cursor: image.lightbox || (image.linkDestination === 'custom' && image.href) || image.linkDestination === 'attachment' || image.linkDestination === 'media' ? 'pointer' : 'default'
+                        }}
+                      />
+                    )}
+                    { image.caption && <p className="swiper-slide__caption" dangerouslySetInnerHTML={ safeHtml(image.caption) } /> }
+                    <div className="swiper-lazy-preloader swiper-lazy-preloader-white" style={{ visibility: isLoaded ? 'hidden' : 'visible' }} />
+                  </MediaFrame>
+                </SwiperSlide>
+              );
+            })}
           </Swiper>
         </div>
 
