@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "composite": true,
+
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+
+    "types": ["node"]
+  },
+
+  "include": [
+    "vite.config.ts",
+    "eslint.config.mjs",
+    "postcss.config.js"
+  ]
+}

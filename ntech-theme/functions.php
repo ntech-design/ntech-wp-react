@@ -20,12 +20,38 @@ function ntech_page_menu_args($args) {
 }
 add_filter('wp_page_menu_args', 'ntech_page_menu_args');
 
+function ntech_is_spa_request() {
+    if (is_admin()) {
+        return false;
+    }
+
+    $request_path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
+    $uri = trim($request_path, '/');
+
+    if ($uri === '') {
+        return false;
+    }
+
+    if (
+        strpos($uri, 'wp-admin') === 0 ||
+        strpos($uri, 'wp-includes') === 0 ||
+        strpos($uri, 'wp-json') === 0 ||
+        strpos($uri, 'wp-content') === 0 ||
+        strpos($uri, 'graphql') === 0 ||
+        preg_match('/\.(js|css|jpg|jpeg|png|gif|svg|webp|woff2?|ttf|eot|ico|map|json)$/i', $uri)
+    ) {
+        return false;
+    }
+
+    return true;
+}
+
 /**
  * Enqueue React build files
  */
 function enqueue_react_assets() {
     if (is_admin()) return;
-    if (! (is_front_page() || is_page_template('front-page.php') || get_query_var('spa_mode'))) {
+    if (! (is_front_page() || is_page_template('front-page.php') || ntech_is_spa_request())) {
         return;
     }
 
@@ -68,6 +94,14 @@ function enqueue_react_assets() {
             'themeUrl'        => $theme_uri,
         ]);
     }
+}
+
+function ntech_vite_module_script($tag, $handle, $src) {
+    if ($handle !== 'theme-script') {
+        return $tag;
+    }
+
+    return '<script type="module" src="' . esc_url($src) . '" id="' . esc_attr($handle) . '-js"></script>' . "\n";
 }
 
 function show_admin_messages() {
@@ -153,21 +187,7 @@ function register_types() {
 }
 
 function force_spa_template($template) {
-    if (is_admin()) {
-        return $template;
-    }
-
-    $uri = trim($_SERVER['REQUEST_URI'] ?? '', '/');
-
-    if (
-        $uri === '' ||
-        strpos($uri, 'wp-admin') === 0 ||
-        strpos($uri, 'wp-includes') === 0 ||
-        strpos($uri, 'wp-json') === 0 ||
-        strpos($uri, 'wp-content') === 0 ||
-        strpos($uri, 'graphql') === 0 ||
-        preg_match('/\.(js|css|jpg|jpeg|png|gif|svg|webp|woff2?|ttf|eot|ico|map|json)$/i', $uri)
-    ) {
+    if (!ntech_is_spa_request()) {
         return $template;
     }
 
@@ -231,6 +251,7 @@ add_action('init', 'create_post_type_attributes', 0);
 
 add_action('admin_notices', 'show_admin_messages');
 add_action('wp_enqueue_scripts', 'enqueue_react_assets');
+add_filter('script_loader_tag', 'ntech_vite_module_script', 10, 3);
 add_action('wp_enqueue_scripts', 'deregister_assets', 100);
 add_action('graphql_register_types', 'register_types');
 

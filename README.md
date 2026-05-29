@@ -7,6 +7,12 @@
 ![WordPress](https://img.shields.io/badge/backend-wordpress-21759B)
 ![Security](https://img.shields.io/badge/security-sanitized-brightgreen)
 
+![TypeScript](https://img.shields.io/badge/typescript-3178C6?logo=typescript&logoColor=white)
+![Apollo](https://img.shields.io/badge/apollo-311C87?logo=apollo-graphql&logoColor=white)
+![Vite](https://img.shields.io/badge/vite-646CFF?logo=vite&logoColor=white)
+![MUI](https://img.shields.io/badge/mui-007FFF?logo=mui&logoColor=white)
+![SCSS](https://img.shields.io/badge/scss-CC6699?logo=sass&logoColor=white)
+
 A modern headless WordPress theme using React and WPGraphQL with a dynamic block-based rendering system.
 
 Built with React, TypeScript, Apollo Client, GraphQL, MUI and SCSS.
@@ -69,14 +75,13 @@ npm run dev
 
 ## 🌐 Services
 
-| Service     | URL                           |
-| ----------- | ----------------------------- |
-| Frontend    | http://localhost:3000         |
-| WordPress   | http://localhost:8080         |
-| GraphQL API | http://localhost:8080/graphql |
-| BrowserSync | http://localhost:3001         |
-| MailDev     | http://localhost:1080         |
-| PHPMyAdmin  | http://localhost:8180         |
+| Service     | URL                            |
+| ----------- |--------------------------------|
+| Frontend    | http://localhost:8080          |
+| WordPress   | http://localhost:8080/wp-admin |
+| GraphQL API | http://localhost:8080/graphql  |
+| MailDev     | http://localhost:1080          |
+| PHPMyAdmin  | http://localhost:8180          |
 
 > ℹ️ WP CLI:
 >
@@ -164,7 +169,7 @@ Run inside `ntech-theme`:
 
 ```bash
 npm run lint        # ESLint
-npm run test        # TypeScript + Jest
+npm run test        # TypeScript + Vitest
 npm run build:prod  # Production build
 npm run build:dev   # Development build
 npm run dev         # Watch mode
