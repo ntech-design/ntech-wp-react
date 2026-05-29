@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { normalizeTemplate, parseAspectRatioValue, stripHtml, wpText } from '@/utils/template';
 
 describe('template utilities', () => {

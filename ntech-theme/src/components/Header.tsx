@@ -205,8 +205,7 @@ function Header() {
   if (menuLoading) return (
     <HeaderRoot id="site-header">
       <Container>
-        <div className='header__container'>
-        </div>
+        <div className='header__container'></div>
         <nav id="side-navigation" className="header__navigation" role="navigation">
           <ul className="header__navigation__menu">
             <li className="header__navigation__item">

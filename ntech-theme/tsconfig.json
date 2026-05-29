@@ -9,14 +9,14 @@
     "module": "ESNext",
     "jsx": "react-jsx",
     "strict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "pretty": true,
     "outDir": "./dist",
     "sourceMap": true,
     "baseUrl": "./src",
-    "types": ["node", "jest"],
+    "types": ["node"],
     "paths": {
       "@/*": ["*"]
     },
@@ -31,5 +31,8 @@
     "./node_modules",
     "./node_modules/*",
     "./node_modules/@types/node/index.d.ts"
+  ],
+  "references": [
+    { "path": "./tsconfig.node.json" }
   ]
 }

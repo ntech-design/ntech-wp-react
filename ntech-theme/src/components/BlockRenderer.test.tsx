@@ -1,9 +1,10 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { describe, expect, it, vi } from 'vitest';
 import BlockRenderer from '@/components/BlockRenderer';
 import type { WordPressBlock } from '@/types/content';
 
-jest.mock('dompurify', () => ({
+vi.mock('dompurify', () => ({
   __esModule: true,
   default: {
     sanitize: (html: string) => html
@@ -12,7 +13,7 @@ jest.mock('dompurify', () => ({
   },
 }));
 
-jest.mock('@/components/HtmlContent', () => ({
+vi.mock('@/components/HtmlContent', () => ({
   __esModule: true,
   default: ({ html }: { html: string }) => <div data-testid="html-content">{html}</div>,
 }));

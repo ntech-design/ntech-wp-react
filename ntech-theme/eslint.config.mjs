@@ -19,10 +19,15 @@ export default [
 
   // Node Config Files
   {
-    files: ["*.config.js"],
+    files: [
+      "*.config.js",
+      "*.config.mjs",
+      "*.config.ts",
+      "vite.config.ts"
+    ],
     languageOptions: {
       globals: globals.node,
-      sourceType: "commonjs",
+      sourceType: "module",
     },
   },
 
@@ -42,7 +47,7 @@ export default [
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        project: "./tsconfig.json",
+        project: ["./tsconfig.json", "./tsconfig.node.json"],
       },
       globals: globals.node,
     },
