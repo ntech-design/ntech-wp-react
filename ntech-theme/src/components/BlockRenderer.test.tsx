@@ -1,5 +1,4 @@
-import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { render as renderToStaticMarkup } from 'preact-render-to-string';
 import { describe, expect, it, vi } from 'vitest';
 import BlockRenderer from '@/components/BlockRenderer';
 import type { WordPressBlock } from '@/types/content';
@@ -132,6 +131,6 @@ describe('BlockRenderer', () => {
     );
 
     expect(markup).toContain('data-testid="html-content"');
-    expect(markup).toContain('&lt;section&gt;Raw content&lt;/section&gt;');
+    expect(markup).toContain('&lt;section>Raw content&lt;/section>');
   });
 });

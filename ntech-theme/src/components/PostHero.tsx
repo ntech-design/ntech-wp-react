@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'preact/compat';
 import { styled } from '@mui/material/styles';
 import { PostType } from '@/types/wordpress';
 import HtmlContent from "@/components/HtmlContent";

@@ -1,5 +1,4 @@
-import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { render as renderToStaticMarkup } from 'preact-render-to-string';
 import { describe, expect, it, vi } from 'vitest';
 import Attribute from '@/components/Attribute';
 

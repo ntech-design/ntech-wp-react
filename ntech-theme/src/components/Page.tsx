@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from 'preact/compat';
 import { useLocation } from 'react-router-dom';
 import { usePage } from '@/hooks/usePage';
 import { useScrollToTop } from '@/hooks/useScrollToTop';

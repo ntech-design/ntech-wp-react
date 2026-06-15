@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
+import { useMemo } from 'preact/compat';
 import { GET_PAGE_WITH_POSTS } from '@/apollo/queries/content';
 import { PageWithPostsDataType, PostType } from '@/types/wordpress';
 
@@ -7,14 +8,17 @@ export const usePage = (slug?: string) => {
   const { slug: routeSlug } = useParams();
   const slugParam = slug ?? routeSlug ?? 'home';
   const routeKey = location.pathname;
+  const queryVariables = useMemo(() => ({
+    pageId: slugParam,
+    category: slugParam
+  }), [slugParam]);
 
   const { data, loading, error } = useQuery<PageWithPostsDataType>(
     GET_PAGE_WITH_POSTS,
     {
-      variables: { pageId: slugParam, category: slugParam },
+      variables: queryVariables,
       context: { routeKey, slug },
-      fetchPolicy: 'cache-and-network',
-      nextFetchPolicy: 'cache-first',
+      fetchPolicy: 'cache-first',
       errorPolicy: 'all',
       notifyOnNetworkStatusChange: true
     }

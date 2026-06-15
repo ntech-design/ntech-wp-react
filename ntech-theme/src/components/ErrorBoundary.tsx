@@ -1,12 +1,12 @@
-import React from 'react';
+import { Component, ComponentChildren } from 'preact';
 import ErrorPage from '@/pages/ErrorPage';
 
 interface ErrorBoundaryProps {
-  children: React.ReactNode,
+  children: ComponentChildren,
   hasError: false,
 }
 
-class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+class ErrorBoundary extends Component<{ children: ComponentChildren }, { hasError: boolean }> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };

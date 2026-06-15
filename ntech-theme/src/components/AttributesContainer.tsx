@@ -1,4 +1,4 @@
-import React, { Fragment, Suspense, lazy } from 'react';
+import { Fragment, Suspense, lazy } from 'preact/compat';
 import { useQuery } from '@apollo/client/react';
 import { GET_ALL_ATTRIBUTES } from '@/apollo/queries/attributes';
 

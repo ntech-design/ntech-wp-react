@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'preact/compat';
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import Container from '@mui/material/Container';
@@ -110,4 +110,4 @@ function Footer() {
   );
 }
 
-export default React.memo(Footer);
+export default memo(Footer);

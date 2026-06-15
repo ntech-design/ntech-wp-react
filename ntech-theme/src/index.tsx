@@ -1,5 +1,4 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot } from 'preact/compat/client';
 import App from '@/app';
 import '@/assets/styles/main.scss';
 

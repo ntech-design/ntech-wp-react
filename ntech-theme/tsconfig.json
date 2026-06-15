@@ -8,6 +8,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "strict": true,
     "moduleResolution": "bundler",
     "esModuleInterop": true,
@@ -18,7 +19,9 @@
     "baseUrl": "./src",
     "types": ["node"],
     "paths": {
-      "@/*": ["*"]
+      "@types/react": ["node_modules/preact/compat"],
+      "@types/react-dom": ["node_modules/preact/compat"],
+      "@/*": ["*"],
     },
     "typeRoots": [
       "./node_modules/@types",

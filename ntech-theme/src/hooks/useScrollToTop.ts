@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from 'preact/compat';
 import { useLocation } from 'react-router-dom';
 
 export function useScrollToTop() {
