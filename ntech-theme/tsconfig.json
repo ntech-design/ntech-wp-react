@@ -16,12 +16,13 @@
     "pretty": true,
     "outDir": "./dist",
     "sourceMap": true,
-    "baseUrl": "./src",
     "types": ["node"],
     "paths": {
-      "@types/react": ["node_modules/preact/compat"],
-      "@types/react-dom": ["node_modules/preact/compat"],
-      "@/*": ["*"],
+      "@types/react": ["./node_modules/preact/compat"],
+      "@types/react-dom": ["./node_modules/preact/compat"],
+      "yet-another-react-lightbox": ["./vendor/yet-another-react-lightbox/dist/index.d.ts"],
+      "yet-another-react-lightbox/*": ["./vendor/yet-another-react-lightbox/dist/*"],
+      "@/*": ["./src/*"],
     },
     "typeRoots": [
       "./node_modules/@types",

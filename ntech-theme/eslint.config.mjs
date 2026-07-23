@@ -9,6 +9,7 @@ export default [
     ignores: [
       "dist/**",
       "node_modules/**",
+      "vendor/**",
       "src/test/**",
       "**/*.test.ts",
       "**/*.test.tsx"

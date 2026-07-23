@@ -46,9 +46,11 @@ export default defineConfig(({ mode }) => {
       wordpressManifest(),
     ],
     resolve: {
-      alias: {
-        '@': path.resolve(__dirname, 'src'),
-      },
+      alias: [
+        { find: '@', replacement: path.resolve(__dirname, 'src') },
+        { find: /^yet-another-react-lightbox$/, replacement: path.resolve(__dirname, 'vendor/yet-another-react-lightbox/dist/index.js') },
+        { find: /^yet-another-react-lightbox\/(.*)$/, replacement: path.resolve(__dirname, 'vendor/yet-another-react-lightbox/dist/$1') },
+      ],
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
     },
     define: {

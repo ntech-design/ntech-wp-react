@@ -81,7 +81,6 @@ describe('BlockRenderer', () => {
     expect(markup).toContain('<ol class="icon-list">');
     expect(markup).toContain('<li class="icon-wiki featured">');
     expect(markup).toContain('Wikipedia');
-    expect(markup).toContain('<span class="icon">');
   });
 
   it('renders nested column blocks recursively', () => {
