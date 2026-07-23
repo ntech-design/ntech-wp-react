@@ -1,4 +1,5 @@
-import React, { Suspense, lazy, useState, useCallback, ReactNode } from 'react';
+import { ComponentChildren } from 'preact';
+import { Suspense, lazy, useEffect, useState, useCallback } from 'preact/compat';
 import { ApolloProvider } from '@apollo/client/react';
 import client from '@/apollo/client';
 import { styled } from "@mui/material/styles";
@@ -25,7 +26,7 @@ const Layout = styled('div')({
   backgroundColor: 'var(--mui-palette-background-default)',
 });
 
-function PageWrapper({ children }: { children: ReactNode }) {
+function PageWrapper({ children }: { children: ComponentChildren }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -47,7 +48,7 @@ function AppRoutes() {
   const [pendingLocation, setPendingLocation] = useState<typeof location | null>(null);
   const [showLoader, setShowLoader] = useState<boolean>(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (location.pathname !== displayLocation.pathname) {
       setPendingLocation(location);
     }
@@ -60,7 +61,7 @@ function AppRoutes() {
     }
   }, [pendingLocation]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let delayTimer: ReturnType<typeof setTimeout>;
 
     setShowLoader(true);

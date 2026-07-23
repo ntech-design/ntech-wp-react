@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'preact/compat';
 import { useTheme } from '@mui/material/styles';
 import { styled } from '@mui/material/styles';
 import { ColorModeSwitch } from '@/components/ColorModeSwitch';
@@ -46,7 +46,18 @@ const HeaderRoot = styled('header')(({ theme }) => ({
   letterSpacing: '0.035rem',
   color: 'var(--mui-palette-header_color)',
   zIndex: 1,
-  [theme.breakpoints.up('sm')]: { position: 'sticky' },
+  [theme.breakpoints.up('sm')]: {
+    position: 'sticky',
+    '@supports (animation-range: 0vh 90vh)': {
+      animation: 'parallax-header linear forwards',
+      animationTimeline: 'scroll()',
+      animationRange: '0vh 90vh',
+    },
+    '@keyframes parallax-header': {
+      from: { top: 0 },
+      to: { top: '-6.6rem' }
+    }
+  },
 
   '&::before': {
     content: '""',
@@ -56,7 +67,9 @@ const HeaderRoot = styled('header')(({ theme }) => ({
     width: '100%',
     height: '9.6rem',
     backgroundColor: 'var(--mui-palette-header_bg)',
-    background:'linear-gradient(to bottom, var(--mui-palette-header_bg) 31%, var(--mui-palette-header_bg_gradient) 100%)',
+    background: 'linear-gradient(to bottom, rgb(from var(--mui-palette-header_bg) r g b / 0.85) 31%, rgb(from var(--mui-palette-header_bg_gradient) r g b / 0.90) 100%)',
+    backdropFilter: 'blur(10px)',
+    backgroundRepeat: 'no-repeat',
     boxShadow: '0 -4px 6px 3px rgba(0, 0, 0, 0.75)',
     borderBottom: `1px solid ${theme.palette.header_bg}`,
     zIndex: 0
@@ -269,4 +282,4 @@ function Header() {
   );
 }
 
-export default React.memo(Header);
+export default memo(Header);

@@ -1,4 +1,3 @@
-import React from 'react';
 import { PostType } from '@/types/wordpress';
 import { styled } from '@mui/material/styles';
 import { safeHtml } from '@/utils/template';

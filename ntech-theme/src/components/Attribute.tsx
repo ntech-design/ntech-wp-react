@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import { Fragment } from 'preact/compat';
 import { safeHtml } from '@/utils/template';
 
 interface AttributeProps {

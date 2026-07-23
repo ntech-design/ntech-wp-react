@@ -13,6 +13,7 @@ export const GET_INFO = gql`
 export const GET_PAGE_WITH_POSTS = gql`
   query GetPage($pageId: ID!, $category: String!) {
     page(id: $pageId, idType: URI) {
+      id
       title
       slug
       content
@@ -28,7 +29,7 @@ export const GET_PAGE_WITH_POSTS = gql`
         title
         slug
         content
-        categories { nodes { slug } }
+        categories { nodes { id slug } }
         postLayout { placement }
 
         editorBlocks(flat: false) {
@@ -44,6 +45,7 @@ export const GET_PAGE_WITH_POSTS = gql`
             attributes { columns align sizeSlug linkTo }
             innerBlocks {
               __typename
+              clientId
               ... on CoreImage { attributes { id url alt caption width height linkDestination href lightbox linkTarget } }
             }
           }

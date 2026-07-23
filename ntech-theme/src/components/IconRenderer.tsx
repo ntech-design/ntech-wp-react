@@ -1,53 +1,55 @@
-/**
- * Add icons to access them via WP
- * Rescource: https://react-icons.github.io/react-icons/
- */
+import JSXInternal, { FunctionComponent, ComponentChildren } from 'preact';
 
-import React from 'react';
-import { IconType } from 'react-icons';
-
-import {
-  FaCheck,
-  FaTimes,
-  FaWikipediaW,
-  FaSteam,
-  FaRegFrown,
-  FaRegSmile,
-  FaRegTrashAlt,
-  FaSyncAlt
-} from 'react-icons/fa';
+import LinkedinIcon from '@/assets/icons/linkedin.svg';
+import XingIcon from '@/assets/icons/xing.svg';
+import GithubIcon from '@/assets/icons/github.svg';
+import SearchIcon from '@/assets/icons/search.svg';
+import ReactIcon from '@/assets/icons/react.svg';
 
 export type IconKey = (
-  'check' |
-  'times' |
-  'wiki' |
-  'steam' |
-  'frown' |
-  'smile' |
-  'trash' |
-  'sync'
-);
+  'linkedin' |
+  'xing' |
+  'github' |
+  'search' |
+  'react'
+  );
 
-export const iconMap: Record<IconKey, IconType> = {
-  'check': FaCheck,
-  'times': FaTimes,
-  'wiki': FaWikipediaW,
-  'steam': FaSteam,
-  'frown': FaRegFrown,
-  'smile': FaRegSmile,
-  'trash': FaRegTrashAlt,
-  'sync': FaSyncAlt
+type IconType = {
+  component: FunctionComponent<JSXInternal.SVGAttributes<SVGSVGElement>>;
+  viewBox?: string;
+  defaultSize?: number | string;
 };
 
-export const getIcon = (key?: string): React.ReactNode | null => {
+type GetIconProps = {
+  size?: number | string;
+  className?: string;
+} & Omit<JSXInternal.SVGAttributes<SVGSVGElement>, 'key' | 'size' | 'className'>;
+
+const iconMap: Record<IconKey, IconType> = {
+  'linkedin': { component: LinkedinIcon, viewBox: '0 0 48 48' },
+  'xing': { component: XingIcon, viewBox: '0 0 48 48' },
+  'github': { component: GithubIcon, viewBox: '0 0 48 48' },
+  'search': { component: SearchIcon },
+  'react': { component: ReactIcon }
+};
+
+export const getIcon = (key?: string, { size = '1em', className = '', ...props }: GetIconProps = {}): ComponentChildren => {
   if (!key) return null;
 
   const Icon = iconMap[key as IconKey];
-
-  if (!Icon) {
+  if (!Icon?.component) {
     console.warn(`Unknown icon: ${key}`);
     return null;
   }
 
-  return <Icon />;
+  return (
+    <Icon.component
+      className={`icon ${className}`.trim()}
+      width={size}
+      height={size}
+      viewBox={Icon.viewBox || '0 0 24 24'}
+      preserveAspectRatio="xMidYMid meet"
+      {...props}
+    />
+  );
 };

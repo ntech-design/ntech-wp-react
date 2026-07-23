@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'preact/compat';
 import parse, { HTMLReactParserOptions } from 'html-react-parser';
 import { wpText } from '@/utils/template';
 import { safeHtml } from '@/utils/template';

@@ -9,6 +9,11 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
 
+    "paths": {
+      "yet-another-react-lightbox": ["./vendor/yet-another-react-lightbox/dist/index.d.ts"],
+      "yet-another-react-lightbox/*": ["./vendor/yet-another-react-lightbox/dist/*"]
+    },
+
     "types": ["node"]
   },
 

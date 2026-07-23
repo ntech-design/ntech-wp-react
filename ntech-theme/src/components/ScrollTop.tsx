@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'preact/compat';
 import { styled } from '@mui/material/styles';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 

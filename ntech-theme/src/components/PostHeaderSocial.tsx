@@ -1,6 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { styled } from '@mui/material/styles';
+import { styled, Theme } from '@mui/material/styles';
 
 type StyledProps = {
   height?: number;
@@ -13,7 +12,7 @@ const Root = styled('div')({});
 export default function PostHeaderSocial({ position = 'left', height = 35, width = 240 }: StyledProps) {
   return (
     <Root
-      sx={(theme) => ({
+      sx={(theme: Theme) => ({
         position: 'absolute',
         bottom: '-1px',
         left: position === 'left' ? '-1px' : 'auto',

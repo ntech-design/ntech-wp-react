@@ -1,13 +1,16 @@
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
+import { SetContextLink } from '@apollo/client/link/context';
 
 const httpLink = new HttpLink({
   uri: import.meta.env.VITE_GRAPHQL_ENDPOINT,
 });
 
-const authLink = setContext((_, { headers }) => {
-  // JWT / nonce / basic auth etc.
-  return { headers };
+const authLink = new SetContextLink((prevContext) => {
+  const headers = prevContext.headers || {};
+  return {
+    ...prevContext,
+    headers: { ...headers },
+  };
 });
 
 const client = new ApolloClient({
@@ -16,10 +19,9 @@ const client = new ApolloClient({
     resultCaching: true
   }),
   defaultOptions: {
-    watchQuery: {
-      fetchPolicy: 'cache-first'
-    }
-  }
+    watchQuery: { fetchPolicy: 'cache-first' },
+    query: { fetchPolicy: 'cache-first' },
+  },
 });
 
 export default client;

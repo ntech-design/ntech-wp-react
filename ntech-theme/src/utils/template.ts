@@ -1,18 +1,22 @@
-import React from 'react';
+import { ComponentType, ComponentChildren } from 'preact';
 import { LayoutType } from '@/types/wordpress';
 import LayoutDefault from '@/layouts/Default';
 import layoutMap from '@/maps/layouts';
 import DOMPurify from 'dompurify';
 import type { Config } from 'dompurify';
 
+type PreactLayoutComponent = ComponentType<LayoutType> | ((props: LayoutType) => ComponentChildren);
+
 export function normalizeTemplate(template?: string) {
   if (!template) return 'default';
   return template.replace('.php', '').replace('.html', '').toLowerCase();
 }
 
-export function resolveLayout(template?: string): React.ComponentType<LayoutType> {
+export function resolveLayout(template?: string): PreactLayoutComponent {
   const templateKey = normalizeTemplate(template);
-  return layoutMap[templateKey] || LayoutDefault;
+  const currentLayout = (layoutMap as Record<string, PreactLayoutComponent>)[templateKey];
+
+  return currentLayout || LayoutDefault;
 }
 
 export function stripHtml(html: string) {

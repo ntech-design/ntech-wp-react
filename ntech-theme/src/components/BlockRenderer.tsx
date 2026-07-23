@@ -1,4 +1,5 @@
-import React, { JSX, Suspense, lazy, useMemo } from 'react';
+import { ComponentChildren } from 'preact';
+import { JSX, Suspense, lazy, useMemo, memo } from 'preact/compat';
 import { WordPressBlock, CoreImageBlock } from '@/types/content';
 import { styled } from '@mui/material/styles';
 import Skeleton from '@mui/material/Skeleton';
@@ -62,7 +63,7 @@ const GalleryFallbackSkeleton = styled(Skeleton)({
 
 function GalleryFallback({ aspectRatio, children }: {
   aspectRatio?: string;
-  children?: React.ReactNode;
+  children?: ComponentChildren;
 }) {
   return (
     <GalleryFallbackRoot aria-hidden="true">
@@ -123,7 +124,7 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
       return aspectRatios;
     };
 
-    const renderBlock = (block: WordPressBlock, index: number, allBlocks: WordPressBlock[]): React.ReactNode => {
+    const renderBlock = (block: WordPressBlock, index: number, allBlocks: WordPressBlock[]): ComponentChildren => {
       if (!block) return null;
       if (consumedBlocks.has(block.clientId)) return null;
 
@@ -152,7 +153,7 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
 
           // Gallery Description
           const nextBlock = allBlocks[index + 1];
-          let descriptionContent: React.ReactNode = null;
+          let descriptionContent: ComponentChildren = null;
 
           if (nextBlock && nextBlock.name === 'core/html') {
             consumedBlocks.add(nextBlock.clientId);
@@ -273,4 +274,4 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
   return <>{ renderedBlocks }</>;
 }
 
-export default React.memo(BlockRenderer);
+export default memo(BlockRenderer);

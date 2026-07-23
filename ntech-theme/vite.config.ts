@@ -1,5 +1,5 @@
 import { defineConfig, type Plugin } from 'vite';
-import react from '@vitejs/plugin-react';
+import preact from '@preact/preset-vite';
 import svgr from 'vite-plugin-svgr';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -38,7 +38,7 @@ export default defineConfig(({ mode }) => {
   return {
     base: './',
     plugins: [
-      react(),
+      preact(),
       svgr({
         include: '**/*.svg',
         svgrOptions: { icon: true },
@@ -46,9 +46,11 @@ export default defineConfig(({ mode }) => {
       wordpressManifest(),
     ],
     resolve: {
-      alias: {
-        '@': path.resolve(__dirname, 'src'),
-      },
+      alias: [
+        { find: '@', replacement: path.resolve(__dirname, 'src') },
+        { find: /^yet-another-react-lightbox$/, replacement: path.resolve(__dirname, 'vendor/yet-another-react-lightbox/dist/index.js') },
+        { find: /^yet-another-react-lightbox\/(.*)$/, replacement: path.resolve(__dirname, 'vendor/yet-another-react-lightbox/dist/$1') },
+      ],
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
     },
     define: {
@@ -67,9 +69,19 @@ export default defineConfig(({ mode }) => {
       minify: isProduction,
       assetsInlineLimit: 0,
       cssCodeSplit: true,
-      rollupOptions: {
+      rolldownOptions: {
         input: {
           main: path.resolve(__dirname, 'src/index.tsx'),
+        },
+        onLog(level, log, handler) {
+          if (
+            log.code === 'IMPORT_IS_UNDEFINED' &&
+            log.message?.includes('preact/compat')
+          ) {
+            return;
+          }
+
+          handler(level, log);
         },
         output: {
           entryFileNames: isProduction ? '[name].[hash].js' : '[name].js',

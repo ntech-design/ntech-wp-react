@@ -1,16 +1,15 @@
+import { useState, useMemo } from 'preact/compat';
 import { useLazyQuery } from '@apollo/client/react';
 import { SEARCH_CONTENT } from '@/apollo/queries/search';
 import { SearchQueryResult, SearchItem, CategoryNode } from '@/types/search';
-import { useState, useMemo } from 'react';
 
 export function useSearch() {
   const [term, setTerm] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
 
-  const [runSearch, { data, loading }] =
-    useLazyQuery<SearchQueryResult>(SEARCH_CONTENT, {
-      fetchPolicy: 'no-cache',
-    });
+  const [runSearch, { loading, data }] = useLazyQuery<SearchQueryResult>(SEARCH_CONTENT, {
+    fetchPolicy: 'no-cache',
+  });
 
   const search = (value: string) => {
     const trimmed = value.trim();

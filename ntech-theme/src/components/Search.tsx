@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 import { useSearch } from '@/hooks/useSearch';
 import { stripHtml, wpText } from '@/utils/template';
-import { TbSearch } from 'react-icons/tb';
+import { getIcon } from '@/components/IconRenderer';
 import DOMPurify from 'dompurify';
 import { humanize } from '@/utils/typography';
 
@@ -33,14 +33,14 @@ export default function Search() {
         <TextField
           fullWidth
           value={term}
-          onChange={(e) => setTerm(e.target.value)}
+          onChange={(e) => setTerm(e.currentTarget.value)}
           label="Search content"
           onKeyDown={(e) => {
             if (e.key === 'Enter') search(term);
           }}
         />
 
-        <Button variant="contained" startIcon={<TbSearch />} onClick={() => search(term)}>Find</Button>
+        <Button variant="contained" startIcon={getIcon('search')} onClick={() => search(term)}>Find</Button>
       </Box>
 
       {loading && (

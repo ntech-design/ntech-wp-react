@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import JSXInternal, { ImgHTMLAttributes } from 'preact';
+import { useState, useEffect, useRef, memo } from 'preact/compat';
 
 type PersistImageProps = {
   src: string;
@@ -8,7 +9,7 @@ type PersistImageProps = {
   className?: string;
   placeholder?: string;
   effect?: 'blur' | 'opacity';
-} & Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'>;
+} & Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'>;
 
 const PersistImageComponent = ({
   src,
@@ -20,12 +21,23 @@ const PersistImageComponent = ({
   effect = 'blur',
   ...props
 }: PersistImageProps)=> {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
   const [hasError, setHasError] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(() => {
+    if (typeof window !== 'undefined' && imgRef.current) {
+      return imgRef.current.complete;
+    }
+    return false;
+  });
 
   useEffect(() => {
-    setIsLoaded(false);
-    setHasError(false);
+    if (imgRef.current && imgRef.current.complete) {
+      setIsLoaded(true);
+      setHasError(false);
+    } else {
+      setIsLoaded(false);
+      setHasError(false);
+    }
   }, [src]);
 
   const handleLoad = () => setIsLoaded(true);
@@ -34,6 +46,7 @@ const PersistImageComponent = ({
   return (
     <img
       {...props}
+      ref={imgRef}
       src={hasError && placeholder ? placeholder : src}
       alt={alt}
       width={width}
@@ -48,10 +61,11 @@ const PersistImageComponent = ({
         transition: effect === 'blur' ? 'filter 0.4s ease, opacity 0.4s ease' : 'opacity 0.35s ease',
         filter: isLoaded ? 'blur(0)' : 'blur(5px)',
         willChange: 'opacity, filter',
+        ...(props.style as JSXInternal.CSSProperties)
       }}
     />
   );
 }
 
-const PersistImage = React.memo(PersistImageComponent);
+const PersistImage = memo(PersistImageComponent);
 export default PersistImage;

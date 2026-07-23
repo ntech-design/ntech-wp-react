@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { ComponentChildren } from 'preact';
+import { useEffect, useState, useMemo } from 'preact/compat';
 import { styled } from '@mui/material/styles';
 import Skeleton from '@mui/material/Skeleton';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -31,7 +32,7 @@ type GalleryImage = {
 type GalleryProps = {
   images: GalleryImage[];
   columns?: number;
-  children?: React.ReactNode;
+  children?: ComponentChildren;
 };
 
 const loadedImageCache = new Set<string>();
@@ -194,6 +195,14 @@ export default function Gallery({ images, children }: GalleryProps) {
 
   if (!images?.length) return null;
 
+  const stableSlides = useMemo(() => {
+    return images.map((img) => ({
+      src: img.url,
+      alt: img.alt,
+      captionHtml: img.caption,
+    }));
+  }, [images]);
+
   return (
     <SwiperWrapper>
       <SwiperRoot className="swiper-gallery">
@@ -274,8 +283,18 @@ export default function Gallery({ images, children }: GalleryProps) {
           close={() => setLightboxOpen(false)}
           index={lightboxIndex}
           controller={{ closeOnBackdropClick: true }}
-          slides={images.map((img) => ({ src: img.url, alt: img.alt, title: (<span dangerouslySetInnerHTML={ safeHtml(img.caption) } />) }))}
+          slides={stableSlides}
           plugins={[Zoom, Captions]}
+          render={{
+            slideFooter: ({ slide }) => {
+              if ('captionHtml' in slide && slide.captionHtml) {
+                return (
+                  <span className="title" style={{ margin: '1rem' }} dangerouslySetInnerHTML={ safeHtml(slide.captionHtml as string) } />
+                );
+              }
+              return null;
+            }
+          }}
         />
       </SwiperRoot>
 
