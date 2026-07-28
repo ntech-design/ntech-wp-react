@@ -209,11 +209,11 @@ export default function Gallery({ images, children }: GalleryProps) {
         <div className="swiper-gallery__viewport">
           <Swiper
             modules={[Pagination, Navigation]}
-            slidesPerView={1}
-            spaceBetween={10}
-            loop={true}
+            slidesPerView={ 1 }
+            spaceBetween={ 10 }
+            loop={ true }
             pagination={{ clickable: true }}
-            navigation={true}
+            navigation={ true }
             className="swiper-gallery__container"
             onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
           >
@@ -235,8 +235,8 @@ export default function Gallery({ images, children }: GalleryProps) {
 
                     {shouldRenderImage && (
                       <img
-                        src={image.url}
-                        alt={image.alt || ''}
+                        src={ image.url }
+                        alt={ image.alt || '' }
                         onLoad={() => {
                           loadedImageCache.add(imageCacheKey);
                           setLoadedImages((prev) => ({ ...prev, [imageCacheKey]: true }));
@@ -279,12 +279,12 @@ export default function Gallery({ images, children }: GalleryProps) {
         </div>
 
         <Lightbox
-          open={lightboxOpen}
-          close={() => setLightboxOpen(false)}
-          index={lightboxIndex}
+          open={ lightboxOpen }
+          close={ () => setLightboxOpen(false) }
+          index={ lightboxIndex }
           controller={{ closeOnBackdropClick: true }}
-          slides={stableSlides}
-          plugins={[Zoom, Captions]}
+          slides={ stableSlides }
+          plugins={ [Zoom, Captions] }
           render={{
             slideFooter: ({ slide }) => {
               if ('captionHtml' in slide && slide.captionHtml) {

@@ -19,27 +19,40 @@ const MainContent = styled('main')(({ theme }) => ({
 }));
 
 function LayoutStatic({ page, headerPosts, contentPosts, sidebarPosts, loading = false }: LayoutType) {
-  if (loading) return null;
+  if (loading) return (
+    <Container id="site-content" sx={{ flexGrow: 1 }}>
+      <ContentStyles id="content-wrapper">
+        <Suspense fallback={<div style={{ height: 60 }} />}>
+          <PostHeader title={ '' } posts={ undefined } showHeader={ false } />
+        </Suspense>
+        <MainContent role='main'>
+          <Suspense fallback={<div style={{ height: 400 }} />}>
+            <PostContent posts={ undefined } content={ '' } />
+          </Suspense>
+        </MainContent>
+      </ContentStyles>
+    </Container>
+  );
 
   return (
     <>
       <Container id="site-content" sx={{ flexGrow: 1 }}>
         <ContentStyles id="content-wrapper">
-          <Suspense fallback={null}>
+          <Suspense fallback={ null }>
             <PostHeader title={ wpText(page.title) } posts={ headerPosts } showHeader={ false } />
           </Suspense>
           <MainContent role='main'>
-            <Suspense fallback={null}>
+            <Suspense fallback={ null }>
               <PostContent posts={ contentPosts } content={ wpText(page.content) } />
             </Suspense>
-            <Suspense fallback={null}>
+            <Suspense fallback={ null }>
               <PostSidebar posts={ sidebarPosts } />
             </Suspense>
           </MainContent>
         </ContentStyles>
       </Container>
 
-      <Suspense fallback={null}>
+      <Suspense fallback={ null }>
         <ScrollTop />
       </Suspense>
     </>

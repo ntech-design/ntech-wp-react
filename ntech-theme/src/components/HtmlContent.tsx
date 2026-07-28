@@ -27,13 +27,13 @@ export default function HtmlContent({ html }: HtmlContentProps) {
         if (!src) return null;
 
         return (
-          <Suspense fallback={null}>
+          <Suspense fallback={ null }>
             <PersistImage
-              src={src}
-              alt={alt}
-              width={width}
-              height={height}
-              className={className}
+              src={ src }
+              alt={ alt }
+              width={ width }
+              height={ height }
+              className={ className }
             />
           </Suspense>
         );
@@ -41,5 +41,5 @@ export default function HtmlContent({ html }: HtmlContentProps) {
     },
   };
 
-  return <>{parse(clean.__html, options)}</>;
+  return <>{ parse(clean.__html, options) }</>;
 }

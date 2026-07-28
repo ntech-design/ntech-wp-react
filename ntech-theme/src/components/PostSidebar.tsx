@@ -23,9 +23,9 @@ export default function PostSidebar({ posts }: PostSidebarProps) {
   return (
     <PostSidebarRoot id="content-sidebar">
       {posts.map((post: PostType) => (
-        <div key={post.id} id={post.slug}>
+        <div key={ post.id } id={ post.slug }>
           { post?.editorBlocks && post.editorBlocks.length > 0 ? (
-            <BlockRenderer blocks={post.editorBlocks} />
+            <BlockRenderer blocks={ post.editorBlocks } />
           ) : (
             post.content && (
               <div dangerouslySetInnerHTML={ safeHtml(post.content) } />

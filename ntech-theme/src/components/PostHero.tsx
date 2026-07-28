@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'preact/compat';
 import { styled } from '@mui/material/styles';
 import { PostType } from '@/types/wordpress';
+import Skeleton from '@mui/material/Skeleton';
 import HtmlContent from "@/components/HtmlContent";
 
 type PostHeroProps = {
@@ -60,17 +61,54 @@ const PostHeroRoot = styled('header')(({ theme }) => ({
 }));
 
 export default function PostHero({ id = 'content-header', posts }: PostHeroProps) {
+  if (!posts) return (
+    <PostHeroRoot id={ id }>
+      <div className='post-hero'>
+        <div class="wp-block-columns is-layout-flex wp-block-columns-is-layout-flex" style={{ flexWrap: 'wrap' }}>
+          <div class="wp-block-column post-hero__image is-layout-flow wp-block-column-is-layout-flow">
+            <div class="wp-block-image size-full"  style={{ width: '100%', flexGrow: 0 }}>
+              <Skeleton variant="rectangular" height={ 333 } sx={{ mb: 2 }} />
+            </div>
+          </div>
+
+          <div class="wp-block-column post-hero__aside is-layout-flow wp-block-column-is-layout-flow" style={{ flexGrow: 1 }}>
+            <Skeleton variant="text" width="50%" />
+            <Skeleton variant="text" width="100%" sx={{ mb: 2 }} />
+            <Skeleton variant="text" width="60%" />
+            <Skeleton variant="text" width="30%" sx={{ mb: 2 }} />
+            <Skeleton variant="text" width="75%" />
+            <Skeleton variant="text" width="85%" />
+          </div>
+
+          <div class="wp-block-column post-hero__content is-layout-flow wp-block-column-is-layout-flow" style={{ flexGrow: 1 }}>
+            <Skeleton variant="text" height={ 60 } width="60%" sx={{ mb: 1 }} />
+            <Skeleton variant="text" height={ 30 } width="80%"/>
+            <Skeleton variant="text" height={ 30 } width="70%" sx={{ mb: 2 }} />
+            <Skeleton variant="text" width="95%" />
+            <Skeleton variant="text" width="85%" />
+            <Skeleton variant="text" width="90%" />
+            <Skeleton variant="text" width="75%" sx={{ mb: 2 }} />
+            <Skeleton variant="text" width="65%" sx={{ mb: 2 }} />
+          </div>
+        </div>
+      </div>
+      <Suspense fallback={ null }>
+        <PostHeaderSocial position="right" width={ 250 } />
+      </Suspense>
+    </PostHeroRoot>
+  );
+
   return (
-    <PostHeroRoot id={id}>
+    <PostHeroRoot id={ id }>
       <div className='post-hero'>
         {posts?.map((post: PostType) => (
-          <div key={post.id}>
+          <div key={ post.id }>
             <HtmlContent html={ post.content } />
           </div>
         ))}
       </div>
-      <Suspense fallback={null}>
-        <PostHeaderSocial position="right" width={250} />
+      <Suspense fallback={ null }>
+        <PostHeaderSocial position="right" width={ 250 } />
       </Suspense>
     </PostHeroRoot>
   );

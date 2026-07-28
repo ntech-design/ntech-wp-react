@@ -97,7 +97,7 @@ export default function ScrollToTop() {
   }, []);
 
   return (
-    <ButtonTop id="site-scroll-up" visible={visible} onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} tabIndex={-1}>
+    <ButtonTop id="site-scroll-up" visible={ visible } onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} tabIndex={ -1 }>
       To top
       <IconWrapper>
         <ArrowDropUpIcon fontSize="small" />

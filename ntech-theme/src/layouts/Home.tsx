@@ -18,24 +18,38 @@ const MainContent = styled('main')(({ theme }) => ({
 }));
 
 function LayoutHome({ page, headerPosts, contentPosts, loading = false }: LayoutType) {
-  if (loading) return null;
+  if (loading) return (
+    <Container id="site-content" sx={{ flexGrow: 1 }}>
+      <ContentStyles id="content-wrapper">
+        <Suspense fallback={<div style={{ height: 410 }} />}>
+          <PostHero title={ '' } posts={ undefined } />
+        </Suspense>
+
+        <MainContent role='main'>
+          <Suspense fallback={<div style={{ height: 100 }} />}>
+            <PostContent />
+          </Suspense>
+        </MainContent>
+      </ContentStyles>
+    </Container>
+  );
 
   return (
     <>
       <Container id="site-content" sx={{ flexGrow: 1 }}>
         <ContentStyles id="content-wrapper">
-          <Suspense fallback={null}>
+          <Suspense fallback={ null }>
             <PostHero title={ wpText(page.title) } posts={ headerPosts } />
           </Suspense>
           <MainContent role='main'>
-            <Suspense fallback={null}>
+            <Suspense fallback={ null }>
               <PostContent posts={ contentPosts } content={ wpText(page.content) } />
             </Suspense>
           </MainContent>
         </ContentStyles>
       </Container>
 
-      <Suspense fallback={null}>
+      <Suspense fallback={ null }>
         <ScrollTop />
       </Suspense>
     </>

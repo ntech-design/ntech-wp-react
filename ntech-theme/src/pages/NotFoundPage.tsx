@@ -29,7 +29,7 @@ function NotFoundPage() {
             </>
           )}
 
-          <Suspense fallback={null}>
+          <Suspense fallback={ null }>
             <Search />
           </Suspense>
         </MainContent>

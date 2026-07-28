@@ -45,17 +45,17 @@ const PersistImageComponent = ({
 
   return (
     <img
-      {...props}
-      ref={imgRef}
-      src={hasError && placeholder ? placeholder : src}
-      alt={alt}
-      width={width}
-      height={height}
+      { ...props }
+      ref={ imgRef }
+      src={ hasError && placeholder ? placeholder : src }
+      alt={ alt }
+      width={ width }
+      height={ height }
       className={[className, effect === 'blur' && 'blur-load'].filter(Boolean).join(' ')}
       loading="lazy"
       decoding="async"
-      onLoad={handleLoad}
-      onError={handleError}
+      onLoad={ handleLoad }
+      onError={ handleError }
       style={{
         opacity: isLoaded ? 1 : 0.6,
         transition: effect === 'blur' ? 'filter 0.4s ease, opacity 0.4s ease' : 'opacity 0.35s ease',

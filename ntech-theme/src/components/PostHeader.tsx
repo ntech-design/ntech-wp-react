@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'preact/compat';
 import DOMPurify from 'dompurify';
 import { styled } from '@mui/material/styles';
 import { PostType } from '@/types/wordpress';
+import Skeleton from "@mui/material/Skeleton";
 import HtmlContent from '@/components/HtmlContent';
 
 type PostHeaderProps = {
@@ -42,10 +43,12 @@ const PostHeaderRoot = styled('header')(({ theme }) => ({
 const PostHeaderHeadline = styled('header')({});
 
 export default function PostHeader({ id = 'content-header', title, posts, showHeader = true }: PostHeaderProps) {
+  const _title = title ? DOMPurify.sanitize(title) : <Skeleton variant="text" height={ 50 } width="30%" sx={{ mb: 2 }} />
+
   if (!showHeader) {
     return (
       <PostHeaderHeadline>
-        <h1>{ DOMPurify.sanitize(title) }</h1>
+        <h1>{ _title }</h1>
       </PostHeaderHeadline>
     );
   }
@@ -53,15 +56,15 @@ export default function PostHeader({ id = 'content-header', title, posts, showHe
   return (
     <PostHeaderRoot id={id}>
       <div className='post-header__content'>
-        <h1>{ DOMPurify.sanitize(title) }</h1>
+        <h1>{ _title }</h1>
 
         {posts?.map((post: PostType) => (
-          <div key={post.id} style={{ display: 'flex', width: '100%' }}>
+          <div key={ post.id } style={{ display: 'flex', width: '100%' }}>
             <HtmlContent html={ post.content } />
           </div>
         ))}
       </div>
-      <Suspense fallback={null}>
+      <Suspense fallback={ null }>
         <PostHeaderSocial/>
       </Suspense>
     </PostHeaderRoot>

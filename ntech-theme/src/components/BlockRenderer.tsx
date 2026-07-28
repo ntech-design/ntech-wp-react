@@ -164,9 +164,9 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
 
           return (
             <Suspense
-              key={block.clientId}
+              key={ block.clientId }
               fallback={
-                <GalleryFallback aspectRatio={aspectRatios[0]}>
+                <GalleryFallback aspectRatio={ aspectRatios[0] }>
                   { descriptionContent }
                 </GalleryFallback>
               }
@@ -188,7 +188,7 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
               key={block.clientId}
               className={attrs.className || 'wp-block-image'}
             >
-              <Suspense fallback={null}>
+              <Suspense fallback={ null }>
                 <PersistImage
                   src={ src }
                   alt={ typeof attrs.alt === 'string' ? attrs.alt : '' }
@@ -223,7 +223,7 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
         case 'core/list': {
           const Tag = block.attributes.ordered ? 'ol' : 'ul';
           return (
-            <Tag key={block.clientId} className={block.attributes.className || ''}>
+            <Tag key={ block.clientId } className={ block.attributes.className || '' }>
               { block.innerBlocks?.map((child) => renderBlock(child as WordPressBlock, -1, EMPTY_BLOCKS)) }
             </Tag>
           );
@@ -244,8 +244,8 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
             .replace(CLOSING_LI_PATTERN, '');
 
           return (
-            <li key={block.clientId} className={className}>
-              { icon && <span className="icon">{icon}</span> }
+            <li key={block.clientId} className={ className }>
+              { icon && <span className="icon">{ icon }</span> }
               <span dangerouslySetInnerHTML={ safeHtml(content) } />
             </li>
           );
@@ -262,7 +262,7 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
         case 'core/html':
         default:
           if (block.renderedHtml) {
-            return <HtmlContent key={block.clientId} html={block.renderedHtml} />;
+            return <HtmlContent key={ block.clientId } html={ block.renderedHtml } />;
           }
           return null;
       }

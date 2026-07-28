@@ -45,11 +45,11 @@ export const getIcon = (key?: string, { size = '1em', className = '', ...props }
   return (
     <Icon.component
       className={`icon ${className}`.trim()}
-      width={size}
-      height={size}
-      viewBox={Icon.viewBox || '0 0 24 24'}
+      width={ size }
+      height={ size }
+      viewBox={ Icon.viewBox || '0 0 24 24' }
       preserveAspectRatio="xMidYMid meet"
-      {...props}
+      { ...props }
     />
   );
 };

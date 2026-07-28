@@ -32,7 +32,7 @@ export default function Search() {
       <Box sx={{ display: 'flex', gap: 2 }}>
         <TextField
           fullWidth
-          value={term}
+          value={ term }
           onChange={(e) => setTerm(e.currentTarget.value)}
           label="Search content"
           onKeyDown={(e) => {
@@ -40,12 +40,12 @@ export default function Search() {
           }}
         />
 
-        <Button variant="contained" startIcon={getIcon('search')} onClick={() => search(term)}>Find</Button>
+        <Button variant="contained" startIcon={ getIcon('search') } onClick={() => search(term)}>Find</Button>
       </Box>
 
       {loading && (
         <Box sx={{ mt: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
-          <CircularProgress size={20} />
+          <CircularProgress size={ 20 } />
           <Typography component="span">Searching...</Typography>
         </Box>
       )}
@@ -56,7 +56,7 @@ export default function Search() {
 
       <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 3 }}>
         {results.map((item) => (
-          <Box key={item.id} sx={{
+          <Box key={ item.id } sx={{
             p: 2,
             borderRadius: 'var(--mui-shape-borderRadius)',
             border: '1px solid var(--mui-palette-divider)',
@@ -83,7 +83,7 @@ export default function Search() {
               }
             </Typography>
 
-            { item.url && (<Link to={item.url} className="btn-lifted">Show</Link>) }
+            { item.url && (<Link to={ item.url } className="btn-lifted">Show</Link>) }
           </Box>
         ))}
       </Box>

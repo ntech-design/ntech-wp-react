@@ -17,6 +17,7 @@ import { GET_INFO } from '@/apollo/queries/content';
 import { useQuery } from '@apollo/client/react';
 import { motion } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
+import Skeleton from "@mui/material/Skeleton";
 
 interface HeaderMenuItem {
   id: string;
@@ -221,15 +222,16 @@ function Header() {
         <div className='header__container'></div>
         <nav id="side-navigation" className="header__navigation" role="navigation">
           <ul className="header__navigation__menu">
-            <li className="header__navigation__item">
-              <span className="link">&nbsp;</span>
-            </li>
+            <li className="header__navigation__item"><Skeleton variant="text" height={ 47 } width="100%" /></li>
+            <li className="header__navigation__item"><Skeleton variant="text" height={ 47 } width="100%" /></li>
+            <li className="header__navigation__item"><Skeleton variant="text" height={ 47 } width="100%" /></li>
+            <li className="header__navigation__item"><Skeleton variant="text" height={ 47 } width="100%" /></li>
           </ul>
         </nav>
       </Container>
     </HeaderRoot>
   );
-  if (menuError) return <header>Error: {menuError.message}</header>;
+  if (menuError) return <header>Error: { menuError.message }</header>;
   if (!menuData?.menu) return null;
 
   return (
@@ -242,7 +244,7 @@ function Header() {
             transition={{ duration: 1, delay: 0.2 }}
           >
             <div className="header__title">
-              <a href={url}>
+              <a href={ url }>
                 <span>{ pageTitle[0] }</span> { pageTitle[1] }
               </a>
             </div>
@@ -264,10 +266,10 @@ function Header() {
           </div>
           <ul id="menu-main" className="header__navigation__menu" role="menu">
             {menuData.menu.menuItems.nodes.map((item) => (
-              <li className="header__navigation__item" key={item.id} role="menuitem" tabIndex={-1}>
+              <li className="header__navigation__item" key={ item.id } role="menuitem" tabIndex={-1}>
                 <NavLink
-                  to={new URL(item.url).pathname}
-                  target={item.target || '_self'}
+                  to={ new URL(item.url).pathname }
+                  target={ item.target || '_self' }
                   className={({ isActive }) => isActive ? 'active' : ''}
                 >
                   { item.label }

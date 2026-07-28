@@ -100,22 +100,22 @@ function AppRoutes() {
 
       <Layout style={{ width: '100%', flex: 1 }}>
         <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
+          <Routes location={ location } key={ location.pathname }>
             <Route path="/" element={
-              <Suspense fallback={null}>
+              <Suspense fallback={ null }>
                 <PageWrapper>
-                  <Page onReady={handlePageReady} />
+                  <Page onReady={ handlePageReady } />
                 </PageWrapper>
               </Suspense>
             } />
             <Route path="/:slug" element={
-              <Suspense fallback={null}>
+              <Suspense fallback={ null }>
                 <PageWrapper>
-                  <Page onReady={handlePageReady} />
+                  <Page onReady={ handlePageReady } />
                 </PageWrapper>
               </Suspense>
             } />
-            <Route path="*" element={<NotFoundPage />} />
+            <Route path="*" element={ <NotFoundPage /> } />
           </Routes>
         </AnimatePresence>
       </Layout>

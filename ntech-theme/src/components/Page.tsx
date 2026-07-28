@@ -48,18 +48,18 @@ const Page = ({ onReady }: PageProps) => {
    * Guards
    */
   if (loading) return <div style={{ minHeight: '10px', opacity: 0 }} />;
-  if (error) return <ErrorPage error={error} />;
+  if (error) return <ErrorPage error={ error } />;
   if (!page) return <NotFoundPage />;
 
   const LayoutComponent = resolveLayout(page.wpTemplate);
 
   return (
     <LayoutComponent
-      page={page}
-      headerPosts={headerPosts}
-      contentPosts={contentPosts}
-      sidebarPosts={sidebarPosts}
-      loading={loading}
+      page={ page }
+      headerPosts={ headerPosts }
+      contentPosts={ contentPosts }
+      sidebarPosts={ sidebarPosts }
+      loading={ loading }
     />
   );
 };
